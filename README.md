@@ -1,9 +1,9 @@
-# SouthCity IT Technical Test: Enterprise AI Assistant for AST Property ERP
+# SouthCity IT Technical Test: Enterprise AI Assistant for Property ERP
 
 Selamat datang di Technical Test untuk posisi **AI Engineer** di SouthCity.
 
 ## Case Scenario
-Manajemen SouthCity membutuhkan sistem **AI Data Query Assistant** yang mampu menerjemahkan pertanyaan dalam bahasa manusia (*Natural Language*) menjadi **Text-to-SQL Query** pada database **MS SQL Server ERP AST Advance Property Plus** (Sales, Tenant Billing, hingga General Ledger).
+Manajemen SouthCity membutuhkan sistem **AI Data Query Assistant** yang mampu menerjemahkan pertanyaan dalam bahasa manusia (*Natural Language*) menjadi **Text-to-SQL Query** pada database **MS SQL Server ERP** (Sales, Tenant Billing, hingga General Ledger).
 
 ---
 
