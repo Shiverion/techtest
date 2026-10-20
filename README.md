@@ -39,7 +39,7 @@ Sistem Anda wajib mengimplementasikan parameter/header `user_role` pada endpoint
 
 ---
 
-## 📦 Kriteria Pengumpulan Tugas:
+## Kriteria Pengumpulan Tugas:
 1. Klik tombol **Use this template** atau *fork* repository ini ke akun GitHub pribadi Anda.
 2. Kerjakan solusi menggunakan stack backend yang Anda kuasai (Python/FastAPI/LangChain/LangGraph atau TypeScript/Node.js).
 3. Buat file `README.md` baru di repo milik Anda yang menjelaskan:
