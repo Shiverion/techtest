@@ -47,3 +47,4 @@ Sistem Anda wajib mengimplementasikan parameter/header `user_role` pada endpoint
    * Langkah-langkah untuk menjalankan aplikasi di lingkungan lokal.
    * Bukti/Screenshot/Video rekaman singkat (1–2 menit) saat AI menjawab **Pertanyaan 1 s/d 5** menggunakan role `Sales_Staff` maupun `Management`.
 4. Kirimkan link repository Anda kepada HRD SouthCity.
+5. Jika anda lolos maka wajib mempresntasikan testnya di sesi tanyajawab secara langsung.
