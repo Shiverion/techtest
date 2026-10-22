@@ -1,3 +1,5 @@
+<img src="src/southcity_assistant/static/logo.svg" width="72" height="72" alt="SouthCity Data Assistant logo">
+
 # SouthCity AI Data Query Assistant
 
 A read-only **Text-to-SQL API** for the SouthCity property ERP on **Microsoft SQL Server**. Management asks
