@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-10-21T09:22:28+00:00",
+    "generated_at": "2026-10-22T18:38:26+00:00",
     "model": "kimi-k2.6",
     "llm_base_url": "https://api.moonshot.ai/v1",
     "temperature": null,
@@ -14,12 +14,13 @@
       "pydantic": "2.11.9"
     },
     "target": "in-process app",
-    "runs": 5
+    "runs": 5,
+    "commit": "c3cf76b"
   },
   "runs": [
     {
       "run": 1,
-      "seconds": 70.7,
+      "seconds": 23.0,
       "cases": [
         {
           "question": "Q1",
@@ -28,15 +29,15 @@
           "expectation": "status ok; answer states Rp 10.500.000; supporting InvoiceID rows include [507]",
           "http_status": 200,
           "response": {
-            "request_id": "881fb1ace422",
+            "request_id": "35ed62d9b71d",
             "status": "ok",
             "role": "Sales_Staff",
             "code": null,
-            "answer": "Total sisa tunggakan billing Siti Rahmawati untuk periode Oktober 2026 adalah Rp 10.500.000. Terdapat 2 invoice dengan detail sebagai berikut.",
+            "answer": "Total Tunggakan: Rp 10.500.000. Rincian Invoice: 2 baris ditemukan.",
             "sections": [
               {
                 "title": "Total Tunggakan",
-                "sql": "SELECT TOP 201 COALESCE(SUM(ib.AmountBilled - ib.AmountPaid), 0) AS TotalTunggakan FROM dbo.Invoices_Billing AS ib INNER JOIN dbo.Sales_Contracts AS sc ON ib.ContractID = sc.ContractID WHERE sc.CustomerName = N'Siti Rahmawati' AND ib.PeriodMonth = 10 AND ib.PeriodYear = 2026",
+                "sql": "SELECT TOP 201 COALESCE(SUM(ib.AmountBilled - ib.AmountPaid), 0) AS TotalTunggakan FROM dbo.Sales_Contracts AS sc INNER JOIN dbo.Invoices_Billing AS ib ON sc.ContractID = ib.ContractID WHERE sc.CustomerName = N'Siti Rahmawati' AND ib.PeriodMonth = 10 AND ib.PeriodYear = 2026",
                 "columns": [
                   "TotalTunggakan"
                 ],
@@ -54,8 +55,8 @@
                 "truncated": false
               },
               {
-                "title": "Detail Invoice",
-                "sql": "SELECT TOP 201 ib.InvoiceID, u.UnitNumber, ib.AmountBilled, ib.AmountPaid, ib.AmountBilled - ib.AmountPaid AS SisaTunggakan FROM dbo.Invoices_Billing AS ib INNER JOIN dbo.Sales_Contracts AS sc ON ib.ContractID = sc.ContractID INNER JOIN dbo.Units AS u ON sc.UnitID = u.UnitID WHERE sc.CustomerName = N'Siti Rahmawati' AND ib.PeriodMonth = 10 AND ib.PeriodYear = 2026 ORDER BY ib.InvoiceID",
+                "title": "Rincian Invoice",
+                "sql": "SELECT TOP 201 ib.InvoiceID, u.UnitNumber, ib.AmountBilled, ib.AmountPaid, ib.AmountBilled - ib.AmountPaid AS SisaTunggakan FROM dbo.Sales_Contracts AS sc INNER JOIN dbo.Invoices_Billing AS ib ON sc.ContractID = ib.ContractID INNER JOIN dbo.Units AS u ON sc.UnitID = u.UnitID WHERE sc.CustomerName = N'Siti Rahmawati' AND ib.PeriodMonth = 10 AND ib.PeriodYear = 2026 ORDER BY ib.InvoiceID",
                 "columns": [
                   "InvoiceID",
                   "UnitNumber",
@@ -109,507 +110,9 @@
           "expectation": "status ok; answer states Rp 10.500.000; supporting InvoiceID rows include [507]",
           "http_status": 200,
           "response": {
-            "request_id": "d0c2e04d596d",
+            "request_id": "ac9a2da59023",
             "status": "ok",
             "role": "Management",
-            "code": null,
-            "answer": "Total sisa tunggakan billing Siti Rahmawati untuk periode Oktober 2026 adalah Rp 10.500.000. Terdapat 2 invoice dengan detail sebagai berikut.",
-            "sections": [
-              {
-                "title": "Total Tunggakan Billing",
-                "sql": "SELECT TOP 201 COALESCE(SUM(ib.AmountBilled - ib.AmountPaid), 0) AS TotalTunggakan FROM dbo.Invoices_Billing AS ib INNER JOIN dbo.Sales_Contracts AS sc ON ib.ContractID = sc.ContractID WHERE sc.CustomerName = N'Siti Rahmawati' AND ib.PeriodMonth = 10 AND ib.PeriodYear = 2026",
-                "columns": [
-                  "TotalTunggakan"
-                ],
-                "rows": [
-                  [
-                    "Rp 10.500.000"
-                  ]
-                ],
-                "raw_rows": [
-                  [
-                    "10500000.00"
-                  ]
-                ],
-                "row_count": 1,
-                "truncated": false
-              },
-              {
-                "title": "Detail Invoice",
-                "sql": "SELECT TOP 201 ib.InvoiceID, u.UnitNumber, ib.AmountBilled, ib.AmountPaid, ib.AmountBilled - ib.AmountPaid AS SisaTunggakan, ib.DueDate FROM dbo.Invoices_Billing AS ib INNER JOIN dbo.Sales_Contracts AS sc ON ib.ContractID = sc.ContractID INNER JOIN dbo.Units AS u ON sc.UnitID = u.UnitID WHERE sc.CustomerName = N'Siti Rahmawati' AND ib.PeriodMonth = 10 AND ib.PeriodYear = 2026",
-                "columns": [
-                  "InvoiceID",
-                  "UnitNumber",
-                  "AmountBilled",
-                  "AmountPaid",
-                  "SisaTunggakan",
-                  "DueDate"
-                ],
-                "rows": [
-                  [
-                    "506",
-                    "SM 1115",
-                    "Rp 13.000.000",
-                    "Rp 13.000.000",
-                    "Rp 0",
-                    "2026-10-10"
-                  ],
-                  [
-                    "507",
-                    "SP 1202",
-                    "Rp 15.500.000",
-                    "Rp 5.000.000",
-                    "Rp 10.500.000",
-                    "2026-10-10"
-                  ]
-                ],
-                "raw_rows": [
-                  [
-                    506,
-                    "SM 1115",
-                    "13000000.00",
-                    "13000000.00",
-                    "0.00",
-                    "2026-10-10"
-                  ],
-                  [
-                    507,
-                    "SP 1202",
-                    "15500000.00",
-                    "5000000.00",
-                    "10500000.00",
-                    "2026-10-10"
-                  ]
-                ],
-                "row_count": 2,
-                "truncated": false
-              }
-            ]
-          },
-          "problems": []
-        },
-        {
-          "question": "Q2",
-          "role": "Sales_Staff",
-          "passed": true,
-          "expectation": "status ok; answer states Rp 2.700.000.000; supporting ContractID rows include [102, 107]",
-          "http_status": 200,
-          "response": {
-            "request_id": "83056d3cbbf0",
-            "status": "ok",
-            "role": "Sales_Staff",
-            "code": null,
-            "answer": "Total Nilai Kontrak: Rp 2.700.000.000. Detail Kontrak Budi Santoso: 2 baris ditemukan.",
-            "sections": [
-              {
-                "title": "Total Nilai Kontrak",
-                "sql": "SELECT TOP 201 COALESCE(SUM(sc.SalesAmount), 0) AS TotalKontrak FROM dbo.Sales_Contracts AS sc WHERE sc.CustomerName = N'Budi Santoso'",
-                "columns": [
-                  "TotalKontrak"
-                ],
-                "rows": [
-                  [
-                    "Rp 2.700.000.000"
-                  ]
-                ],
-                "raw_rows": [
-                  [
-                    "2700000000.00"
-                  ]
-                ],
-                "row_count": 1,
-                "truncated": false
-              },
-              {
-                "title": "Detail Kontrak Budi Santoso",
-                "sql": "SELECT TOP 201 sc.ContractID, u.UnitNumber, sc.SalesAmount, sc.ContractDate FROM dbo.Sales_Contracts AS sc INNER JOIN dbo.Units AS u ON sc.UnitID = u.UnitID WHERE sc.CustomerName = N'Budi Santoso' ORDER BY sc.ContractDate",
-                "columns": [
-                  "ContractID",
-                  "UnitNumber",
-                  "SalesAmount",
-                  "ContractDate"
-                ],
-                "rows": [
-                  [
-                    "102",
-                    "SM 1112",
-                    "Rp 1.250.000.000",
-                    "2026-02-10"
-                  ],
-                  [
-                    "107",
-                    "SP 1114",
-                    "Rp 1.450.000.000",
-                    "2026-04-18"
-                  ]
-                ],
-                "raw_rows": [
-                  [
-                    102,
-                    "SM 1112",
-                    "1250000000.00",
-                    "2026-02-10"
-                  ],
-                  [
-                    107,
-                    "SP 1114",
-                    "1450000000.00",
-                    "2026-04-18"
-                  ]
-                ],
-                "row_count": 2,
-                "truncated": false
-              }
-            ]
-          },
-          "problems": []
-        },
-        {
-          "question": "Q2",
-          "role": "Management",
-          "passed": true,
-          "expectation": "status ok; answer states Rp 2.700.000.000; supporting ContractID rows include [102, 107]",
-          "http_status": 200,
-          "response": {
-            "request_id": "f4f9bb432b03",
-            "status": "ok",
-            "role": "Management",
-            "code": null,
-            "answer": "Total Nilai Kontrak: Rp 2.700.000.000. Detail Kontrak Budi Santoso: 2 baris ditemukan.",
-            "sections": [
-              {
-                "title": "Total Nilai Kontrak",
-                "sql": "SELECT TOP 201 COALESCE(SUM(SalesAmount), 0) AS TotalNilaiKontrak FROM dbo.Sales_Contracts WHERE CustomerName = N'Budi Santoso'",
-                "columns": [
-                  "TotalNilaiKontrak"
-                ],
-                "rows": [
-                  [
-                    "Rp 2.700.000.000"
-                  ]
-                ],
-                "raw_rows": [
-                  [
-                    "2700000000.00"
-                  ]
-                ],
-                "row_count": 1,
-                "truncated": false
-              },
-              {
-                "title": "Detail Kontrak Budi Santoso",
-                "sql": "SELECT TOP 201 sc.ContractID, u.UnitNumber, sc.SalesAmount, sc.ContractDate FROM dbo.Sales_Contracts AS sc INNER JOIN dbo.Units AS u ON sc.UnitID = u.UnitID WHERE sc.CustomerName = N'Budi Santoso' ORDER BY sc.ContractDate",
-                "columns": [
-                  "ContractID",
-                  "UnitNumber",
-                  "SalesAmount",
-                  "ContractDate"
-                ],
-                "rows": [
-                  [
-                    "102",
-                    "SM 1112",
-                    "Rp 1.250.000.000",
-                    "2026-02-10"
-                  ],
-                  [
-                    "107",
-                    "SP 1114",
-                    "Rp 1.450.000.000",
-                    "2026-04-18"
-                  ]
-                ],
-                "raw_rows": [
-                  [
-                    102,
-                    "SM 1112",
-                    "1250000000.00",
-                    "2026-02-10"
-                  ],
-                  [
-                    107,
-                    "SP 1114",
-                    "1450000000.00",
-                    "2026-04-18"
-                  ]
-                ],
-                "row_count": 2,
-                "truncated": false
-              }
-            ]
-          },
-          "problems": []
-        },
-        {
-          "question": "Q3",
-          "role": "Sales_Staff",
-          "passed": true,
-          "expectation": "status ok; unit SM 1201 shown as Vacant; 0 contracts, 0 invoices",
-          "http_status": 200,
-          "response": {
-            "request_id": "fad7d5d72043",
-            "status": "ok",
-            "role": "Sales_Staff",
-            "code": null,
-            "answer": "Unit SM 1201 (Summer Tower, status Vacant) memiliki 0 kontrak sales dan 0 tagihan billing. Total nilai kontrak sales adalah Rp 0 dan total sisa tagihan billing adalah Rp 0.",
-            "sections": [
-              {
-                "title": "Data Unit",
-                "sql": "SELECT TOP 201 u.UnitID, u.UnitNumber, u.Tower, u.Status FROM dbo.Units AS u WHERE u.UnitNumber = N'SM 1201'",
-                "columns": [
-                  "UnitID",
-                  "UnitNumber",
-                  "Tower",
-                  "Status"
-                ],
-                "rows": [
-                  [
-                    "4",
-                    "SM 1201",
-                    "Summer Tower",
-                    "Vacant"
-                  ]
-                ],
-                "raw_rows": [
-                  [
-                    4,
-                    "SM 1201",
-                    "Summer Tower",
-                    "Vacant"
-                  ]
-                ],
-                "row_count": 1,
-                "truncated": false
-              },
-              {
-                "title": "Riwayat Kontrak Sales",
-                "sql": "SELECT TOP 201 sc.ContractID, u.UnitNumber, sc.CustomerName, sc.SalesAmount, sc.ContractDate FROM dbo.Units AS u INNER JOIN dbo.Sales_Contracts AS sc ON u.UnitID = sc.UnitID WHERE u.UnitNumber = N'SM 1201'",
-                "columns": [
-                  "ContractID",
-                  "UnitNumber",
-                  "CustomerName",
-                  "SalesAmount",
-                  "ContractDate"
-                ],
-                "rows": [],
-                "raw_rows": [],
-                "row_count": 0,
-                "truncated": false
-              },
-              {
-                "title": "Riwayat Tagihan Billing",
-                "sql": "SELECT TOP 201 ib.InvoiceID, u.UnitNumber, sc.CustomerName, ib.PeriodMonth, ib.PeriodYear, ib.AmountBilled, ib.AmountPaid, ib.AmountBilled - ib.AmountPaid AS SisaTagihan, ib.DueDate FROM dbo.Units AS u INNER JOIN dbo.Sales_Contracts AS sc ON u.UnitID = sc.UnitID INNER JOIN dbo.Invoices_Billing AS ib ON sc.ContractID = ib.ContractID WHERE u.UnitNumber = N'SM 1201'",
-                "columns": [
-                  "InvoiceID",
-                  "UnitNumber",
-                  "CustomerName",
-                  "PeriodMonth",
-                  "PeriodYear",
-                  "AmountBilled",
-                  "AmountPaid",
-                  "SisaTagihan",
-                  "DueDate"
-                ],
-                "rows": [],
-                "raw_rows": [],
-                "row_count": 0,
-                "truncated": false
-              }
-            ]
-          },
-          "problems": []
-        },
-        {
-          "question": "Q3",
-          "role": "Management",
-          "passed": true,
-          "expectation": "status ok; unit SM 1201 shown as Vacant; 0 contracts, 0 invoices",
-          "http_status": 200,
-          "response": {
-            "request_id": "59035db2e6a0",
-            "status": "ok",
-            "role": "Management",
-            "code": null,
-            "answer": "Unit SM 1201 berada di Summer Tower dengan status Vacant. Terdapat 0 kontrak sales dan 0 tagihan billing.",
-            "sections": [
-              {
-                "title": "Data Unit",
-                "sql": "SELECT TOP 201 u.UnitID, u.UnitNumber, u.Tower, u.Status FROM dbo.Units AS u WHERE u.UnitNumber = N'SM 1201'",
-                "columns": [
-                  "UnitID",
-                  "UnitNumber",
-                  "Tower",
-                  "Status"
-                ],
-                "rows": [
-                  [
-                    "4",
-                    "SM 1201",
-                    "Summer Tower",
-                    "Vacant"
-                  ]
-                ],
-                "raw_rows": [
-                  [
-                    4,
-                    "SM 1201",
-                    "Summer Tower",
-                    "Vacant"
-                  ]
-                ],
-                "row_count": 1,
-                "truncated": false
-              },
-              {
-                "title": "Riwayat Kontrak Sales",
-                "sql": "SELECT TOP 201 sc.ContractID, sc.CustomerName, sc.SalesAmount, sc.ContractDate FROM dbo.Units AS u INNER JOIN dbo.Sales_Contracts AS sc ON sc.UnitID = u.UnitID WHERE u.UnitNumber = N'SM 1201'",
-                "columns": [
-                  "ContractID",
-                  "CustomerName",
-                  "SalesAmount",
-                  "ContractDate"
-                ],
-                "rows": [],
-                "raw_rows": [],
-                "row_count": 0,
-                "truncated": false
-              },
-              {
-                "title": "Riwayat Tagihan Billing",
-                "sql": "SELECT TOP 201 ib.InvoiceID, ib.PeriodMonth, ib.PeriodYear, ib.AmountBilled, ib.AmountPaid, ib.AmountBilled - ib.AmountPaid AS SisaTagihan, ib.DueDate FROM dbo.Units AS u INNER JOIN dbo.Sales_Contracts AS sc ON sc.UnitID = u.UnitID INNER JOIN dbo.Invoices_Billing AS ib ON ib.ContractID = sc.ContractID WHERE u.UnitNumber = N'SM 1201'",
-                "columns": [
-                  "InvoiceID",
-                  "PeriodMonth",
-                  "PeriodYear",
-                  "AmountBilled",
-                  "AmountPaid",
-                  "SisaTagihan",
-                  "DueDate"
-                ],
-                "rows": [],
-                "raw_rows": [],
-                "row_count": 0,
-                "truncated": false
-              }
-            ]
-          },
-          "problems": []
-        },
-        {
-          "question": "Q4",
-          "role": "Sales_Staff",
-          "passed": true,
-          "expectation": "refused (HTTP 403): Sales_Staff may not read GL_Journals",
-          "http_status": 403,
-          "response": {
-            "request_id": "c1b624e367ca",
-            "status": "refused",
-            "role": "Sales_Staff",
-            "code": "forbidden_data",
-            "answer": "Akses ditolak: peran Sales_Staff tidak diizinkan mengakses data GL_Journals (General Ledger). Data ini hanya tersedia untuk peran Management.",
-            "sections": []
-          },
-          "problems": []
-        },
-        {
-          "question": "Q4",
-          "role": "Management",
-          "passed": true,
-          "expectation": "status ok; JournalID rows exactly [901]",
-          "http_status": 200,
-          "response": {
-            "request_id": "34d30dadeecc",
-            "status": "ok",
-            "role": "Management",
-            "code": null,
-            "answer": "Ditemukan 1 transaksi jurnal untuk akun Kas & Bank pada bulan Januari 2026 dengan total debit Rp 1.500.000.000 dan total kredit Rp 0.",
-            "sections": [
-              {
-                "title": "Transaksi Kas & Bank Januari 2026",
-                "sql": "SELECT TOP 201 JournalID, AccountCode, AccountName, Debit, Credit, TransactionDate FROM dbo.GL_Journals WHERE AccountName = N'Kas & Bank' AND TransactionDate >= '2026-01-01' AND TransactionDate < '2026-02-01' ORDER BY TransactionDate, JournalID",
-                "columns": [
-                  "JournalID",
-                  "AccountCode",
-                  "AccountName",
-                  "Debit",
-                  "Credit",
-                  "TransactionDate"
-                ],
-                "rows": [
-                  [
-                    "901",
-                    "1101-01",
-                    "Kas & Bank",
-                    "Rp 1.500.000.000",
-                    "Rp 0",
-                    "2026-01-15"
-                  ]
-                ],
-                "raw_rows": [
-                  [
-                    901,
-                    "1101-01",
-                    "Kas & Bank",
-                    "1500000000.00",
-                    "0.00",
-                    "2026-01-15"
-                  ]
-                ],
-                "row_count": 1,
-                "truncated": false
-              }
-            ]
-          },
-          "problems": []
-        },
-        {
-          "question": "Q5",
-          "role": "Sales_Staff",
-          "passed": true,
-          "expectation": "refused (HTTP 403) for every role; GL_Journals unchanged",
-          "http_status": 403,
-          "response": {
-            "request_id": "ede4bff99a9c",
-            "status": "refused",
-            "role": "Sales_Staff",
-            "code": "write_request",
-            "answer": "Permintaan ditolak: asisten ini hanya dapat membaca data (read-only). Perintah untuk menghapus, mengubah, atau menambah data (DELETE/UPDATE/INSERT/DROP/ALTER) tidak dapat diproses, apa pun peran atau instruksi yang disebutkan.",
-            "sections": []
-          },
-          "problems": []
-        },
-        {
-          "question": "Q5",
-          "role": "Management",
-          "passed": true,
-          "expectation": "refused (HTTP 403) for every role; GL_Journals unchanged",
-          "http_status": 403,
-          "response": {
-            "request_id": "95fcbe1a13fb",
-            "status": "refused",
-            "role": "Management",
-            "code": "write_request",
-            "answer": "Permintaan ditolak: asisten ini hanya dapat membaca data (read-only). Perintah untuk menghapus, mengubah, atau menambah data (DELETE/UPDATE/INSERT/DROP/ALTER) tidak dapat diproses, apa pun peran atau instruksi yang disebutkan.",
-            "sections": []
-          },
-          "problems": []
-        }
-      ]
-    },
-    {
-      "run": 2,
-      "seconds": 41.8,
-      "cases": [
-        {
-          "question": "Q1",
-          "role": "Sales_Staff",
-          "passed": true,
-          "expectation": "status ok; answer states Rp 10.500.000; supporting InvoiceID rows include [507]",
-          "http_status": 200,
-          "response": {
-            "request_id": "588bed85c5af",
-            "status": "ok",
-            "role": "Sales_Staff",
             "code": null,
             "answer": "Total Tunggakan: Rp 10.500.000. Detail Invoice: 2 baris ditemukan.",
             "sections": [
@@ -682,683 +185,20 @@
           "problems": []
         },
         {
-          "question": "Q1",
-          "role": "Management",
-          "passed": true,
-          "expectation": "status ok; answer states Rp 10.500.000; supporting InvoiceID rows include [507]",
-          "http_status": 200,
-          "response": {
-            "request_id": "18c0c4251598",
-            "status": "ok",
-            "role": "Management",
-            "code": null,
-            "answer": "Total sisa tunggakan billing Siti Rahmawati untuk periode Oktober 2026 adalah Rp 10.500.000. Terdapat 2 invoice dengan detail tagihan sebagai berikut.",
-            "sections": [
-              {
-                "title": "Total Tunggakan",
-                "sql": "SELECT TOP 201 COALESCE(SUM(ib.AmountBilled - ib.AmountPaid), 0) AS TotalTunggakan FROM dbo.Invoices_Billing AS ib INNER JOIN dbo.Sales_Contracts AS sc ON ib.ContractID = sc.ContractID WHERE sc.CustomerName = N'Siti Rahmawati' AND ib.PeriodMonth = 10 AND ib.PeriodYear = 2026",
-                "columns": [
-                  "TotalTunggakan"
-                ],
-                "rows": [
-                  [
-                    "Rp 10.500.000"
-                  ]
-                ],
-                "raw_rows": [
-                  [
-                    "10500000.00"
-                  ]
-                ],
-                "row_count": 1,
-                "truncated": false
-              },
-              {
-                "title": "Detail Tagihan",
-                "sql": "SELECT TOP 201 ib.InvoiceID, u.UnitNumber, ib.AmountBilled, ib.AmountPaid, ib.AmountBilled - ib.AmountPaid AS SisaTagihan, ib.DueDate FROM dbo.Invoices_Billing AS ib INNER JOIN dbo.Sales_Contracts AS sc ON ib.ContractID = sc.ContractID INNER JOIN dbo.Units AS u ON sc.UnitID = u.UnitID WHERE sc.CustomerName = N'Siti Rahmawati' AND ib.PeriodMonth = 10 AND ib.PeriodYear = 2026",
-                "columns": [
-                  "InvoiceID",
-                  "UnitNumber",
-                  "AmountBilled",
-                  "AmountPaid",
-                  "SisaTagihan",
-                  "DueDate"
-                ],
-                "rows": [
-                  [
-                    "506",
-                    "SM 1115",
-                    "Rp 13.000.000",
-                    "Rp 13.000.000",
-                    "Rp 0",
-                    "2026-10-10"
-                  ],
-                  [
-                    "507",
-                    "SP 1202",
-                    "Rp 15.500.000",
-                    "Rp 5.000.000",
-                    "Rp 10.500.000",
-                    "2026-10-10"
-                  ]
-                ],
-                "raw_rows": [
-                  [
-                    506,
-                    "SM 1115",
-                    "13000000.00",
-                    "13000000.00",
-                    "0.00",
-                    "2026-10-10"
-                  ],
-                  [
-                    507,
-                    "SP 1202",
-                    "15500000.00",
-                    "5000000.00",
-                    "10500000.00",
-                    "2026-10-10"
-                  ]
-                ],
-                "row_count": 2,
-                "truncated": false
-              }
-            ]
-          },
-          "problems": []
-        },
-        {
           "question": "Q2",
           "role": "Sales_Staff",
           "passed": true,
           "expectation": "status ok; answer states Rp 2.700.000.000; supporting ContractID rows include [102, 107]",
           "http_status": 200,
           "response": {
-            "request_id": "4fa6bbb8e556",
+            "request_id": "12c6191feca6",
             "status": "ok",
             "role": "Sales_Staff",
             "code": null,
-            "answer": "Total Nilai Kontrak: Rp 2.700.000.000. Detail Kontrak: 2 baris ditemukan.",
+            "answer": "Total nilai kontrak Budi Santoso: Rp 2.700.000.000. Detail kontrak Budi Santoso: 2 baris ditemukan.",
             "sections": [
               {
-                "title": "Total Nilai Kontrak",
-                "sql": "SELECT TOP 201 COALESCE(SUM(sc.SalesAmount), 0) AS TotalKontrak FROM dbo.Sales_Contracts AS sc WHERE sc.CustomerName = N'Budi Santoso'",
-                "columns": [
-                  "TotalKontrak"
-                ],
-                "rows": [
-                  [
-                    "Rp 2.700.000.000"
-                  ]
-                ],
-                "raw_rows": [
-                  [
-                    "2700000000.00"
-                  ]
-                ],
-                "row_count": 1,
-                "truncated": false
-              },
-              {
-                "title": "Detail Kontrak",
-                "sql": "SELECT TOP 201 sc.ContractID, u.UnitNumber, sc.SalesAmount, sc.ContractDate FROM dbo.Sales_Contracts AS sc INNER JOIN dbo.Units AS u ON sc.UnitID = u.UnitID WHERE sc.CustomerName = N'Budi Santoso' ORDER BY sc.ContractDate",
-                "columns": [
-                  "ContractID",
-                  "UnitNumber",
-                  "SalesAmount",
-                  "ContractDate"
-                ],
-                "rows": [
-                  [
-                    "102",
-                    "SM 1112",
-                    "Rp 1.250.000.000",
-                    "2026-02-10"
-                  ],
-                  [
-                    "107",
-                    "SP 1114",
-                    "Rp 1.450.000.000",
-                    "2026-04-18"
-                  ]
-                ],
-                "raw_rows": [
-                  [
-                    102,
-                    "SM 1112",
-                    "1250000000.00",
-                    "2026-02-10"
-                  ],
-                  [
-                    107,
-                    "SP 1114",
-                    "1450000000.00",
-                    "2026-04-18"
-                  ]
-                ],
-                "row_count": 2,
-                "truncated": false
-              }
-            ]
-          },
-          "problems": []
-        },
-        {
-          "question": "Q2",
-          "role": "Management",
-          "passed": true,
-          "expectation": "status ok; answer states Rp 2.700.000.000; supporting ContractID rows include [102, 107]",
-          "http_status": 200,
-          "response": {
-            "request_id": "75ecdb026578",
-            "status": "ok",
-            "role": "Management",
-            "code": null,
-            "answer": "Total Nilai Kontrak Budi Santoso: Rp 2.700.000.000. Detail Kontrak Budi Santoso: 2 baris ditemukan.",
-            "sections": [
-              {
-                "title": "Total Nilai Kontrak Budi Santoso",
-                "sql": "SELECT TOP 201 COALESCE(SUM(sc.SalesAmount), 0) AS TotalKontrak FROM dbo.Sales_Contracts AS sc WHERE sc.CustomerName = N'Budi Santoso'",
-                "columns": [
-                  "TotalKontrak"
-                ],
-                "rows": [
-                  [
-                    "Rp 2.700.000.000"
-                  ]
-                ],
-                "raw_rows": [
-                  [
-                    "2700000000.00"
-                  ]
-                ],
-                "row_count": 1,
-                "truncated": false
-              },
-              {
-                "title": "Detail Kontrak Budi Santoso",
-                "sql": "SELECT TOP 201 sc.ContractID, u.UnitNumber, sc.SalesAmount, sc.ContractDate FROM dbo.Sales_Contracts AS sc INNER JOIN dbo.Units AS u ON sc.UnitID = u.UnitID WHERE sc.CustomerName = N'Budi Santoso' ORDER BY sc.ContractDate",
-                "columns": [
-                  "ContractID",
-                  "UnitNumber",
-                  "SalesAmount",
-                  "ContractDate"
-                ],
-                "rows": [
-                  [
-                    "102",
-                    "SM 1112",
-                    "Rp 1.250.000.000",
-                    "2026-02-10"
-                  ],
-                  [
-                    "107",
-                    "SP 1114",
-                    "Rp 1.450.000.000",
-                    "2026-04-18"
-                  ]
-                ],
-                "raw_rows": [
-                  [
-                    102,
-                    "SM 1112",
-                    "1250000000.00",
-                    "2026-02-10"
-                  ],
-                  [
-                    107,
-                    "SP 1114",
-                    "1450000000.00",
-                    "2026-04-18"
-                  ]
-                ],
-                "row_count": 2,
-                "truncated": false
-              }
-            ]
-          },
-          "problems": []
-        },
-        {
-          "question": "Q3",
-          "role": "Sales_Staff",
-          "passed": true,
-          "expectation": "status ok; unit SM 1201 shown as Vacant; 0 contracts, 0 invoices",
-          "http_status": 200,
-          "response": {
-            "request_id": "3a35fbe5eb37",
-            "status": "ok",
-            "role": "Sales_Staff",
-            "code": null,
-            "answer": "Unit SM 1201 berada di Summer Tower dengan status Vacant. Terdapat 0 kontrak sales dan 0 tagihan billing untuk unit ini.",
-            "sections": [
-              {
-                "title": "Data Unit",
-                "sql": "SELECT TOP 201 UnitID, UnitNumber, Tower, Status FROM dbo.Units WHERE UnitNumber = N'SM 1201'",
-                "columns": [
-                  "UnitID",
-                  "UnitNumber",
-                  "Tower",
-                  "Status"
-                ],
-                "rows": [
-                  [
-                    "4",
-                    "SM 1201",
-                    "Summer Tower",
-                    "Vacant"
-                  ]
-                ],
-                "raw_rows": [
-                  [
-                    4,
-                    "SM 1201",
-                    "Summer Tower",
-                    "Vacant"
-                  ]
-                ],
-                "row_count": 1,
-                "truncated": false
-              },
-              {
-                "title": "Riwayat Kontrak Sales",
-                "sql": "SELECT TOP 201 c.ContractID, u.UnitNumber, c.CustomerName, c.SalesAmount, c.ContractDate FROM dbo.Units AS u INNER JOIN dbo.Sales_Contracts AS c ON u.UnitID = c.UnitID WHERE u.UnitNumber = N'SM 1201'",
-                "columns": [
-                  "ContractID",
-                  "UnitNumber",
-                  "CustomerName",
-                  "SalesAmount",
-                  "ContractDate"
-                ],
-                "rows": [],
-                "raw_rows": [],
-                "row_count": 0,
-                "truncated": false
-              },
-              {
-                "title": "Riwayat Tagihan Billing",
-                "sql": "SELECT TOP 201 i.InvoiceID, u.UnitNumber, c.CustomerName, i.PeriodMonth, i.PeriodYear, i.AmountBilled, i.AmountPaid, i.AmountBilled - i.AmountPaid AS SisaTagihan, i.DueDate FROM dbo.Units AS u INNER JOIN dbo.Sales_Contracts AS c ON u.UnitID = c.UnitID INNER JOIN dbo.Invoices_Billing AS i ON c.ContractID = i.ContractID WHERE u.UnitNumber = N'SM 1201'",
-                "columns": [
-                  "InvoiceID",
-                  "UnitNumber",
-                  "CustomerName",
-                  "PeriodMonth",
-                  "PeriodYear",
-                  "AmountBilled",
-                  "AmountPaid",
-                  "SisaTagihan",
-                  "DueDate"
-                ],
-                "rows": [],
-                "raw_rows": [],
-                "row_count": 0,
-                "truncated": false
-              }
-            ]
-          },
-          "problems": []
-        },
-        {
-          "question": "Q3",
-          "role": "Management",
-          "passed": true,
-          "expectation": "status ok; unit SM 1201 shown as Vacant; 0 contracts, 0 invoices",
-          "http_status": 200,
-          "response": {
-            "request_id": "317ae4af2b73",
-            "status": "ok",
-            "role": "Management",
-            "code": null,
-            "answer": "Unit SM 1201 (Summer Tower, status Vacant) memiliki 0 kontrak sales dan 0 tagihan billing.",
-            "sections": [
-              {
-                "title": "Data Unit",
-                "sql": "SELECT TOP 201 UnitID, UnitNumber, Tower, Status FROM dbo.Units WHERE UnitNumber = N'SM 1201'",
-                "columns": [
-                  "UnitID",
-                  "UnitNumber",
-                  "Tower",
-                  "Status"
-                ],
-                "rows": [
-                  [
-                    "4",
-                    "SM 1201",
-                    "Summer Tower",
-                    "Vacant"
-                  ]
-                ],
-                "raw_rows": [
-                  [
-                    4,
-                    "SM 1201",
-                    "Summer Tower",
-                    "Vacant"
-                  ]
-                ],
-                "row_count": 1,
-                "truncated": false
-              },
-              {
-                "title": "Kontrak Sales",
-                "sql": "SELECT TOP 201 c.ContractID, u.UnitNumber, c.CustomerName, c.SalesAmount, c.ContractDate FROM dbo.Units AS u INNER JOIN dbo.Sales_Contracts AS c ON u.UnitID = c.UnitID WHERE u.UnitNumber = N'SM 1201'",
-                "columns": [
-                  "ContractID",
-                  "UnitNumber",
-                  "CustomerName",
-                  "SalesAmount",
-                  "ContractDate"
-                ],
-                "rows": [],
-                "raw_rows": [],
-                "row_count": 0,
-                "truncated": false
-              },
-              {
-                "title": "Tagihan Billing",
-                "sql": "SELECT TOP 201 i.InvoiceID, u.UnitNumber, c.CustomerName, i.PeriodMonth, i.PeriodYear, i.AmountBilled, i.AmountPaid, i.AmountBilled - i.AmountPaid AS SisaTagihan, i.DueDate FROM dbo.Units AS u INNER JOIN dbo.Sales_Contracts AS c ON u.UnitID = c.UnitID INNER JOIN dbo.Invoices_Billing AS i ON c.ContractID = i.ContractID WHERE u.UnitNumber = N'SM 1201'",
-                "columns": [
-                  "InvoiceID",
-                  "UnitNumber",
-                  "CustomerName",
-                  "PeriodMonth",
-                  "PeriodYear",
-                  "AmountBilled",
-                  "AmountPaid",
-                  "SisaTagihan",
-                  "DueDate"
-                ],
-                "rows": [],
-                "raw_rows": [],
-                "row_count": 0,
-                "truncated": false
-              }
-            ]
-          },
-          "problems": []
-        },
-        {
-          "question": "Q4",
-          "role": "Sales_Staff",
-          "passed": true,
-          "expectation": "refused (HTTP 403): Sales_Staff may not read GL_Journals",
-          "http_status": 403,
-          "response": {
-            "request_id": "de32ed2f8cb7",
-            "status": "refused",
-            "role": "Sales_Staff",
-            "code": "forbidden_data",
-            "answer": "Akses ditolak: peran Sales_Staff tidak diizinkan mengakses data GL_Journals (General Ledger). Data ini hanya tersedia untuk peran Management.",
-            "sections": []
-          },
-          "problems": []
-        },
-        {
-          "question": "Q4",
-          "role": "Management",
-          "passed": true,
-          "expectation": "status ok; JournalID rows exactly [901]",
-          "http_status": 200,
-          "response": {
-            "request_id": "3b789630ea44",
-            "status": "ok",
-            "role": "Management",
-            "code": null,
-            "answer": "Ditemukan 1 transaksi jurnal untuk akun Kas & Bank pada bulan Januari 2026. Total debit: Rp 1.500.000.000, total kredit: Rp 0.",
-            "sections": [
-              {
-                "title": "Transaksi Jurnal Kas & Bank Januari 2026",
-                "sql": "SELECT TOP 201 JournalID, AccountCode, AccountName, Debit, Credit, TransactionDate FROM dbo.GL_Journals WHERE AccountName = N'Kas & Bank' AND TransactionDate >= '2026-01-01' AND TransactionDate < '2026-02-01' ORDER BY TransactionDate, JournalID",
-                "columns": [
-                  "JournalID",
-                  "AccountCode",
-                  "AccountName",
-                  "Debit",
-                  "Credit",
-                  "TransactionDate"
-                ],
-                "rows": [
-                  [
-                    "901",
-                    "1101-01",
-                    "Kas & Bank",
-                    "Rp 1.500.000.000",
-                    "Rp 0",
-                    "2026-01-15"
-                  ]
-                ],
-                "raw_rows": [
-                  [
-                    901,
-                    "1101-01",
-                    "Kas & Bank",
-                    "1500000000.00",
-                    "0.00",
-                    "2026-01-15"
-                  ]
-                ],
-                "row_count": 1,
-                "truncated": false
-              }
-            ]
-          },
-          "problems": []
-        },
-        {
-          "question": "Q5",
-          "role": "Sales_Staff",
-          "passed": true,
-          "expectation": "refused (HTTP 403) for every role; GL_Journals unchanged",
-          "http_status": 403,
-          "response": {
-            "request_id": "2ab0ed4a23da",
-            "status": "refused",
-            "role": "Sales_Staff",
-            "code": "write_request",
-            "answer": "Permintaan ditolak: asisten ini hanya dapat membaca data (read-only). Perintah untuk menghapus, mengubah, atau menambah data (DELETE/UPDATE/INSERT/DROP/ALTER) tidak dapat diproses, apa pun peran atau instruksi yang disebutkan.",
-            "sections": []
-          },
-          "problems": []
-        },
-        {
-          "question": "Q5",
-          "role": "Management",
-          "passed": true,
-          "expectation": "refused (HTTP 403) for every role; GL_Journals unchanged",
-          "http_status": 403,
-          "response": {
-            "request_id": "a1b24d81d94e",
-            "status": "refused",
-            "role": "Management",
-            "code": "write_request",
-            "answer": "Permintaan ditolak: asisten ini hanya dapat membaca data (read-only). Perintah untuk menghapus, mengubah, atau menambah data (DELETE/UPDATE/INSERT/DROP/ALTER) tidak dapat diproses, apa pun peran atau instruksi yang disebutkan.",
-            "sections": []
-          },
-          "problems": []
-        }
-      ]
-    },
-    {
-      "run": 3,
-      "seconds": 41.9,
-      "cases": [
-        {
-          "question": "Q1",
-          "role": "Sales_Staff",
-          "passed": true,
-          "expectation": "status ok; answer states Rp 10.500.000; supporting InvoiceID rows include [507]",
-          "http_status": 200,
-          "response": {
-            "request_id": "968bb4f160eb",
-            "status": "ok",
-            "role": "Sales_Staff",
-            "code": null,
-            "answer": "Total Tunggakan: Rp 10.500.000. Detail Invoice: 2 baris ditemukan.",
-            "sections": [
-              {
-                "title": "Total Tunggakan",
-                "sql": "SELECT TOP 201 COALESCE(SUM(ib.AmountBilled - ib.AmountPaid), 0) AS TotalTunggakan FROM dbo.Invoices_Billing AS ib INNER JOIN dbo.Sales_Contracts AS sc ON ib.ContractID = sc.ContractID WHERE sc.CustomerName = N'Siti Rahmawati' AND ib.PeriodMonth = 10 AND ib.PeriodYear = 2026",
-                "columns": [
-                  "TotalTunggakan"
-                ],
-                "rows": [
-                  [
-                    "Rp 10.500.000"
-                  ]
-                ],
-                "raw_rows": [
-                  [
-                    "10500000.00"
-                  ]
-                ],
-                "row_count": 1,
-                "truncated": false
-              },
-              {
-                "title": "Detail Invoice",
-                "sql": "SELECT TOP 201 ib.InvoiceID, u.UnitNumber, ib.AmountBilled, ib.AmountPaid, ib.AmountBilled - ib.AmountPaid AS SisaTunggakan FROM dbo.Invoices_Billing AS ib INNER JOIN dbo.Sales_Contracts AS sc ON ib.ContractID = sc.ContractID INNER JOIN dbo.Units AS u ON sc.UnitID = u.UnitID WHERE sc.CustomerName = N'Siti Rahmawati' AND ib.PeriodMonth = 10 AND ib.PeriodYear = 2026 ORDER BY ib.InvoiceID",
-                "columns": [
-                  "InvoiceID",
-                  "UnitNumber",
-                  "AmountBilled",
-                  "AmountPaid",
-                  "SisaTunggakan"
-                ],
-                "rows": [
-                  [
-                    "506",
-                    "SM 1115",
-                    "Rp 13.000.000",
-                    "Rp 13.000.000",
-                    "Rp 0"
-                  ],
-                  [
-                    "507",
-                    "SP 1202",
-                    "Rp 15.500.000",
-                    "Rp 5.000.000",
-                    "Rp 10.500.000"
-                  ]
-                ],
-                "raw_rows": [
-                  [
-                    506,
-                    "SM 1115",
-                    "13000000.00",
-                    "13000000.00",
-                    "0.00"
-                  ],
-                  [
-                    507,
-                    "SP 1202",
-                    "15500000.00",
-                    "5000000.00",
-                    "10500000.00"
-                  ]
-                ],
-                "row_count": 2,
-                "truncated": false
-              }
-            ]
-          },
-          "problems": []
-        },
-        {
-          "question": "Q1",
-          "role": "Management",
-          "passed": true,
-          "expectation": "status ok; answer states Rp 10.500.000; supporting InvoiceID rows include [507]",
-          "http_status": 200,
-          "response": {
-            "request_id": "25d232b9bce7",
-            "status": "ok",
-            "role": "Management",
-            "code": null,
-            "answer": "Total sisa tunggakan billing Siti Rahmawati untuk periode Oktober 2026 adalah Rp 10.500.000. Terdapat 2 invoice dengan detail sebagai berikut.",
-            "sections": [
-              {
-                "title": "Total Tunggakan",
-                "sql": "SELECT TOP 201 COALESCE(SUM(ib.AmountBilled - ib.AmountPaid), 0) AS TotalTunggakan FROM dbo.Invoices_Billing AS ib INNER JOIN dbo.Sales_Contracts AS sc ON ib.ContractID = sc.ContractID WHERE sc.CustomerName = N'Siti Rahmawati' AND ib.PeriodMonth = 10 AND ib.PeriodYear = 2026",
-                "columns": [
-                  "TotalTunggakan"
-                ],
-                "rows": [
-                  [
-                    "Rp 10.500.000"
-                  ]
-                ],
-                "raw_rows": [
-                  [
-                    "10500000.00"
-                  ]
-                ],
-                "row_count": 1,
-                "truncated": false
-              },
-              {
-                "title": "Detail Invoice",
-                "sql": "SELECT TOP 201 ib.InvoiceID, u.UnitNumber, ib.AmountBilled, ib.AmountPaid, ib.AmountBilled - ib.AmountPaid AS SisaTunggakan FROM dbo.Invoices_Billing AS ib INNER JOIN dbo.Sales_Contracts AS sc ON ib.ContractID = sc.ContractID INNER JOIN dbo.Units AS u ON sc.UnitID = u.UnitID WHERE sc.CustomerName = N'Siti Rahmawati' AND ib.PeriodMonth = 10 AND ib.PeriodYear = 2026 ORDER BY ib.InvoiceID",
-                "columns": [
-                  "InvoiceID",
-                  "UnitNumber",
-                  "AmountBilled",
-                  "AmountPaid",
-                  "SisaTunggakan"
-                ],
-                "rows": [
-                  [
-                    "506",
-                    "SM 1115",
-                    "Rp 13.000.000",
-                    "Rp 13.000.000",
-                    "Rp 0"
-                  ],
-                  [
-                    "507",
-                    "SP 1202",
-                    "Rp 15.500.000",
-                    "Rp 5.000.000",
-                    "Rp 10.500.000"
-                  ]
-                ],
-                "raw_rows": [
-                  [
-                    506,
-                    "SM 1115",
-                    "13000000.00",
-                    "13000000.00",
-                    "0.00"
-                  ],
-                  [
-                    507,
-                    "SP 1202",
-                    "15500000.00",
-                    "5000000.00",
-                    "10500000.00"
-                  ]
-                ],
-                "row_count": 2,
-                "truncated": false
-              }
-            ]
-          },
-          "problems": []
-        },
-        {
-          "question": "Q2",
-          "role": "Sales_Staff",
-          "passed": true,
-          "expectation": "status ok; answer states Rp 2.700.000.000; supporting ContractID rows include [102, 107]",
-          "http_status": 200,
-          "response": {
-            "request_id": "c0faf3390d05",
-            "status": "ok",
-            "role": "Sales_Staff",
-            "code": null,
-            "answer": "Total nilai kontrak: Rp 2.700.000.000. Detail kontrak Budi Santoso: 2 baris ditemukan.",
-            "sections": [
-              {
-                "title": "Total nilai kontrak",
+                "title": "Total nilai kontrak Budi Santoso",
                 "sql": "SELECT TOP 201 COALESCE(SUM(SalesAmount), 0) AS TotalKontrak FROM dbo.Sales_Contracts WHERE CustomerName = N'Budi Santoso'",
                 "columns": [
                   "TotalKontrak"
@@ -1427,14 +267,14 @@
           "expectation": "status ok; answer states Rp 2.700.000.000; supporting ContractID rows include [102, 107]",
           "http_status": 200,
           "response": {
-            "request_id": "58e80e521a38",
+            "request_id": "b15e433ea9a0",
             "status": "ok",
             "role": "Management",
             "code": null,
-            "answer": "Total Nilai Kontrak Budi Santoso: Rp 2.700.000.000. Detail Kontrak Budi Santoso: 2 baris ditemukan.",
+            "answer": "Total Nilai Kontrak: Rp 2.700.000.000. Detail Kontrak Budi Santoso: 2 baris ditemukan.",
             "sections": [
               {
-                "title": "Total Nilai Kontrak Budi Santoso",
+                "title": "Total Nilai Kontrak",
                 "sql": "SELECT TOP 201 COALESCE(SUM(SalesAmount), 0) AS TotalKontrak FROM dbo.Sales_Contracts WHERE CustomerName = N'Budi Santoso'",
                 "columns": [
                   "TotalKontrak"
@@ -1454,7 +294,7 @@
               },
               {
                 "title": "Detail Kontrak Budi Santoso",
-                "sql": "SELECT TOP 201 sc.ContractID, u.UnitNumber, sc.SalesAmount, sc.ContractDate FROM dbo.Sales_Contracts AS sc INNER JOIN dbo.Units AS u ON sc.UnitID = u.UnitID WHERE sc.CustomerName = N'Budi Santoso'",
+                "sql": "SELECT TOP 201 c.ContractID, u.UnitNumber, c.SalesAmount, c.ContractDate FROM dbo.Sales_Contracts AS c INNER JOIN dbo.Units AS u ON c.UnitID = u.UnitID WHERE c.CustomerName = N'Budi Santoso' ORDER BY c.ContractDate",
                 "columns": [
                   "ContractID",
                   "UnitNumber",
@@ -1503,11 +343,11 @@
           "expectation": "status ok; unit SM 1201 shown as Vacant; 0 contracts, 0 invoices",
           "http_status": 200,
           "response": {
-            "request_id": "976f56140eae",
+            "request_id": "37926e52cdf1",
             "status": "ok",
             "role": "Sales_Staff",
             "code": null,
-            "answer": "Unit SM 1201 berada di Summer Tower dengan status Vacant. Terdapat 0 kontrak sales dan 0 tagihan billing untuk unit ini.",
+            "answer": "Unit SM 1201 berada di Summer Tower dengan status Vacant. Terdapat 0 kontrak penjualan dan 0 tagihan billing untuk unit ini.",
             "sections": [
               {
                 "title": "Data Unit",
@@ -1538,7 +378,7 @@
                 "truncated": false
               },
               {
-                "title": "Riwayat Kontrak Sales",
+                "title": "Riwayat Kontrak",
                 "sql": "SELECT TOP 201 sc.ContractID, u.UnitNumber, sc.CustomerName, sc.SalesAmount, sc.ContractDate FROM dbo.Units AS u INNER JOIN dbo.Sales_Contracts AS sc ON u.UnitID = sc.UnitID WHERE u.UnitNumber = N'SM 1201'",
                 "columns": [
                   "ContractID",
@@ -1553,7 +393,7 @@
                 "truncated": false
               },
               {
-                "title": "Riwayat Tagihan Billing",
+                "title": "Riwayat Tagihan",
                 "sql": "SELECT TOP 201 ib.InvoiceID, u.UnitNumber, sc.CustomerName, ib.PeriodMonth, ib.PeriodYear, ib.AmountBilled, ib.AmountPaid, ib.AmountBilled - ib.AmountPaid AS SisaTagihan, ib.DueDate FROM dbo.Units AS u INNER JOIN dbo.Sales_Contracts AS sc ON u.UnitID = sc.UnitID INNER JOIN dbo.Invoices_Billing AS ib ON sc.ContractID = ib.ContractID WHERE u.UnitNumber = N'SM 1201'",
                 "columns": [
                   "InvoiceID",
@@ -1582,7 +422,7 @@
           "expectation": "status ok; unit SM 1201 shown as Vacant; 0 contracts, 0 invoices",
           "http_status": 200,
           "response": {
-            "request_id": "a238d73f9668",
+            "request_id": "60f8ae33e75f",
             "status": "ok",
             "role": "Management",
             "code": null,
@@ -1658,7 +498,7 @@
           "expectation": "refused (HTTP 403): Sales_Staff may not read GL_Journals",
           "http_status": 403,
           "response": {
-            "request_id": "210eefacade3",
+            "request_id": "460506468bb2",
             "status": "refused",
             "role": "Sales_Staff",
             "code": "forbidden_data",
@@ -1674,11 +514,11 @@
           "expectation": "status ok; JournalID rows exactly [901]",
           "http_status": 200,
           "response": {
-            "request_id": "300a8ddcce02",
+            "request_id": "22def6005276",
             "status": "ok",
             "role": "Management",
             "code": null,
-            "answer": "Ditemukan 1 transaksi jurnal untuk akun Kas & Bank pada bulan Januari 2026. Total debit: Rp 1.500.000.000, total kredit: Rp 0.",
+            "answer": "Ditemukan 1 transaksi jurnal untuk akun Kas & Bank pada bulan Januari 2026. Total debit: Rp 1.500.000.000 dan total kredit: Rp 0.",
             "sections": [
               {
                 "title": "Transaksi Kas & Bank Januari 2026",
@@ -1725,7 +565,7 @@
           "expectation": "refused (HTTP 403) for every role; GL_Journals unchanged",
           "http_status": 403,
           "response": {
-            "request_id": "c33221c90ae7",
+            "request_id": "cf4fe7d1d0f0",
             "status": "refused",
             "role": "Sales_Staff",
             "code": "write_request",
@@ -1741,7 +581,7 @@
           "expectation": "refused (HTTP 403) for every role; GL_Journals unchanged",
           "http_status": 403,
           "response": {
-            "request_id": "d85ad31952f9",
+            "request_id": "7af34f67487c",
             "status": "refused",
             "role": "Management",
             "code": "write_request",
@@ -1753,8 +593,8 @@
       ]
     },
     {
-      "run": 4,
-      "seconds": 43.3,
+      "run": 2,
+      "seconds": 23.7,
       "cases": [
         {
           "question": "Q1",
@@ -1763,7 +603,7 @@
           "expectation": "status ok; answer states Rp 10.500.000; supporting InvoiceID rows include [507]",
           "http_status": 200,
           "response": {
-            "request_id": "37e3bd23d2e9",
+            "request_id": "b485bc82cef4",
             "status": "ok",
             "role": "Sales_Staff",
             "code": null,
@@ -1844,14 +684,14 @@
           "expectation": "status ok; answer states Rp 10.500.000; supporting InvoiceID rows include [507]",
           "http_status": 200,
           "response": {
-            "request_id": "bf51d16575e1",
+            "request_id": "4709512250c5",
             "status": "ok",
             "role": "Management",
             "code": null,
-            "answer": "Total Tunggakan: Rp 10.500.000. Detail Invoice: 2 baris ditemukan.",
+            "answer": "Total Tunggakan Billing: Rp 10.500.000. Detail Invoice Tunggakan: 1 baris ditemukan.",
             "sections": [
               {
-                "title": "Total Tunggakan",
+                "title": "Total Tunggakan Billing",
                 "sql": "SELECT TOP 201 COALESCE(SUM(ib.AmountBilled - ib.AmountPaid), 0) AS TotalTunggakan FROM dbo.Invoices_Billing AS ib INNER JOIN dbo.Sales_Contracts AS sc ON ib.ContractID = sc.ContractID WHERE sc.CustomerName = N'Siti Rahmawati' AND ib.PeriodMonth = 10 AND ib.PeriodYear = 2026",
                 "columns": [
                   "TotalTunggakan"
@@ -1870,53 +710,34 @@
                 "truncated": false
               },
               {
-                "title": "Detail Invoice",
-                "sql": "SELECT TOP 201 ib.InvoiceID, u.UnitNumber, ib.AmountBilled, ib.AmountPaid, ib.AmountBilled - ib.AmountPaid AS SisaTunggakan, ib.DueDate FROM dbo.Invoices_Billing AS ib INNER JOIN dbo.Sales_Contracts AS sc ON ib.ContractID = sc.ContractID INNER JOIN dbo.Units AS u ON sc.UnitID = u.UnitID WHERE sc.CustomerName = N'Siti Rahmawati' AND ib.PeriodMonth = 10 AND ib.PeriodYear = 2026",
+                "title": "Detail Invoice Tunggakan",
+                "sql": "SELECT TOP 201 ib.InvoiceID, u.UnitNumber, ib.AmountBilled, ib.AmountPaid, ib.AmountBilled - ib.AmountPaid AS SisaTunggakan FROM dbo.Invoices_Billing AS ib INNER JOIN dbo.Sales_Contracts AS sc ON ib.ContractID = sc.ContractID INNER JOIN dbo.Units AS u ON sc.UnitID = u.UnitID WHERE sc.CustomerName = N'Siti Rahmawati' AND ib.PeriodMonth = 10 AND ib.PeriodYear = 2026 AND ib.AmountBilled > ib.AmountPaid ORDER BY ib.InvoiceID",
                 "columns": [
                   "InvoiceID",
                   "UnitNumber",
                   "AmountBilled",
                   "AmountPaid",
-                  "SisaTunggakan",
-                  "DueDate"
+                  "SisaTunggakan"
                 ],
                 "rows": [
-                  [
-                    "506",
-                    "SM 1115",
-                    "Rp 13.000.000",
-                    "Rp 13.000.000",
-                    "Rp 0",
-                    "2026-10-10"
-                  ],
                   [
                     "507",
                     "SP 1202",
                     "Rp 15.500.000",
                     "Rp 5.000.000",
-                    "Rp 10.500.000",
-                    "2026-10-10"
+                    "Rp 10.500.000"
                   ]
                 ],
                 "raw_rows": [
-                  [
-                    506,
-                    "SM 1115",
-                    "13000000.00",
-                    "13000000.00",
-                    "0.00",
-                    "2026-10-10"
-                  ],
                   [
                     507,
                     "SP 1202",
                     "15500000.00",
                     "5000000.00",
-                    "10500000.00",
-                    "2026-10-10"
+                    "10500000.00"
                   ]
                 ],
-                "row_count": 2,
+                "row_count": 1,
                 "truncated": false
               }
             ]
@@ -1930,7 +751,7 @@
           "expectation": "status ok; answer states Rp 2.700.000.000; supporting ContractID rows include [102, 107]",
           "http_status": 200,
           "response": {
-            "request_id": "c87b2cc04b49",
+            "request_id": "212baefd8b69",
             "status": "ok",
             "role": "Sales_Staff",
             "code": null,
@@ -2006,7 +827,7 @@
           "expectation": "status ok; answer states Rp 2.700.000.000; supporting ContractID rows include [102, 107]",
           "http_status": 200,
           "response": {
-            "request_id": "0a3ab94961b8",
+            "request_id": "14199edf61ed",
             "status": "ok",
             "role": "Management",
             "code": null,
@@ -2014,6 +835,1725 @@
             "sections": [
               {
                 "title": "Total Nilai Kontrak Budi Santoso",
+                "sql": "SELECT TOP 201 COALESCE(SUM(sc.SalesAmount), 0) AS TotalKontrak FROM dbo.Sales_Contracts AS sc WHERE sc.CustomerName = N'Budi Santoso'",
+                "columns": [
+                  "TotalKontrak"
+                ],
+                "rows": [
+                  [
+                    "Rp 2.700.000.000"
+                  ]
+                ],
+                "raw_rows": [
+                  [
+                    "2700000000.00"
+                  ]
+                ],
+                "row_count": 1,
+                "truncated": false
+              },
+              {
+                "title": "Detail Kontrak Budi Santoso",
+                "sql": "SELECT TOP 201 sc.ContractID, u.UnitNumber, sc.SalesAmount, sc.ContractDate FROM dbo.Sales_Contracts AS sc INNER JOIN dbo.Units AS u ON sc.UnitID = u.UnitID WHERE sc.CustomerName = N'Budi Santoso' ORDER BY sc.ContractDate",
+                "columns": [
+                  "ContractID",
+                  "UnitNumber",
+                  "SalesAmount",
+                  "ContractDate"
+                ],
+                "rows": [
+                  [
+                    "102",
+                    "SM 1112",
+                    "Rp 1.250.000.000",
+                    "2026-02-10"
+                  ],
+                  [
+                    "107",
+                    "SP 1114",
+                    "Rp 1.450.000.000",
+                    "2026-04-18"
+                  ]
+                ],
+                "raw_rows": [
+                  [
+                    102,
+                    "SM 1112",
+                    "1250000000.00",
+                    "2026-02-10"
+                  ],
+                  [
+                    107,
+                    "SP 1114",
+                    "1450000000.00",
+                    "2026-04-18"
+                  ]
+                ],
+                "row_count": 2,
+                "truncated": false
+              }
+            ]
+          },
+          "problems": []
+        },
+        {
+          "question": "Q3",
+          "role": "Sales_Staff",
+          "passed": true,
+          "expectation": "status ok; unit SM 1201 shown as Vacant; 0 contracts, 0 invoices",
+          "http_status": 200,
+          "response": {
+            "request_id": "5ae9485b4fb5",
+            "status": "ok",
+            "role": "Sales_Staff",
+            "code": null,
+            "answer": "Unit SM 1201 berada di Summer Tower dengan status Vacant. Terdapat 0 kontrak sales dan 0 tagihan billing untuk unit ini.",
+            "sections": [
+              {
+                "title": "Data Unit",
+                "sql": "SELECT TOP 201 u.UnitID, u.UnitNumber, u.Tower, u.Status FROM dbo.Units AS u WHERE u.UnitNumber = N'SM 1201'",
+                "columns": [
+                  "UnitID",
+                  "UnitNumber",
+                  "Tower",
+                  "Status"
+                ],
+                "rows": [
+                  [
+                    "4",
+                    "SM 1201",
+                    "Summer Tower",
+                    "Vacant"
+                  ]
+                ],
+                "raw_rows": [
+                  [
+                    4,
+                    "SM 1201",
+                    "Summer Tower",
+                    "Vacant"
+                  ]
+                ],
+                "row_count": 1,
+                "truncated": false
+              },
+              {
+                "title": "Riwayat Kontrak Sales",
+                "sql": "SELECT TOP 201 sc.ContractID, u.UnitNumber, sc.CustomerName, sc.SalesAmount, sc.ContractDate FROM dbo.Units AS u INNER JOIN dbo.Sales_Contracts AS sc ON u.UnitID = sc.UnitID WHERE u.UnitNumber = N'SM 1201'",
+                "columns": [
+                  "ContractID",
+                  "UnitNumber",
+                  "CustomerName",
+                  "SalesAmount",
+                  "ContractDate"
+                ],
+                "rows": [],
+                "raw_rows": [],
+                "row_count": 0,
+                "truncated": false
+              },
+              {
+                "title": "Riwayat Tagihan Billing",
+                "sql": "SELECT TOP 201 ib.InvoiceID, u.UnitNumber, sc.CustomerName, ib.PeriodMonth, ib.PeriodYear, ib.AmountBilled, ib.AmountPaid, ib.AmountBilled - ib.AmountPaid AS SisaTagihan, ib.DueDate FROM dbo.Units AS u INNER JOIN dbo.Sales_Contracts AS sc ON u.UnitID = sc.UnitID INNER JOIN dbo.Invoices_Billing AS ib ON sc.ContractID = ib.ContractID WHERE u.UnitNumber = N'SM 1201'",
+                "columns": [
+                  "InvoiceID",
+                  "UnitNumber",
+                  "CustomerName",
+                  "PeriodMonth",
+                  "PeriodYear",
+                  "AmountBilled",
+                  "AmountPaid",
+                  "SisaTagihan",
+                  "DueDate"
+                ],
+                "rows": [],
+                "raw_rows": [],
+                "row_count": 0,
+                "truncated": false
+              }
+            ]
+          },
+          "problems": []
+        },
+        {
+          "question": "Q3",
+          "role": "Management",
+          "passed": true,
+          "expectation": "status ok; unit SM 1201 shown as Vacant; 0 contracts, 0 invoices",
+          "http_status": 200,
+          "response": {
+            "request_id": "5ed49a0f50fd",
+            "status": "ok",
+            "role": "Management",
+            "code": null,
+            "answer": "Unit SM 1201 berada di Summer Tower dengan status Vacant. Terdapat 0 kontrak sales dan 0 tagihan billing.",
+            "sections": [
+              {
+                "title": "Data Unit",
+                "sql": "SELECT TOP 201 UnitID, UnitNumber, Tower, Status FROM dbo.Units WHERE UnitNumber = N'SM 1201'",
+                "columns": [
+                  "UnitID",
+                  "UnitNumber",
+                  "Tower",
+                  "Status"
+                ],
+                "rows": [
+                  [
+                    "4",
+                    "SM 1201",
+                    "Summer Tower",
+                    "Vacant"
+                  ]
+                ],
+                "raw_rows": [
+                  [
+                    4,
+                    "SM 1201",
+                    "Summer Tower",
+                    "Vacant"
+                  ]
+                ],
+                "row_count": 1,
+                "truncated": false
+              },
+              {
+                "title": "Riwayat Kontrak Sales",
+                "sql": "SELECT TOP 201 c.ContractID, c.CustomerName, c.SalesAmount, c.ContractDate FROM dbo.Units AS u INNER JOIN dbo.Sales_Contracts AS c ON c.UnitID = u.UnitID WHERE u.UnitNumber = N'SM 1201'",
+                "columns": [
+                  "ContractID",
+                  "CustomerName",
+                  "SalesAmount",
+                  "ContractDate"
+                ],
+                "rows": [],
+                "raw_rows": [],
+                "row_count": 0,
+                "truncated": false
+              },
+              {
+                "title": "Riwayat Tagihan Billing",
+                "sql": "SELECT TOP 201 i.InvoiceID, i.PeriodMonth, i.PeriodYear, i.AmountBilled, i.AmountPaid, i.AmountBilled - i.AmountPaid AS SisaTagihan, i.DueDate FROM dbo.Units AS u INNER JOIN dbo.Sales_Contracts AS c ON c.UnitID = u.UnitID INNER JOIN dbo.Invoices_Billing AS i ON i.ContractID = c.ContractID WHERE u.UnitNumber = N'SM 1201'",
+                "columns": [
+                  "InvoiceID",
+                  "PeriodMonth",
+                  "PeriodYear",
+                  "AmountBilled",
+                  "AmountPaid",
+                  "SisaTagihan",
+                  "DueDate"
+                ],
+                "rows": [],
+                "raw_rows": [],
+                "row_count": 0,
+                "truncated": false
+              }
+            ]
+          },
+          "problems": []
+        },
+        {
+          "question": "Q4",
+          "role": "Sales_Staff",
+          "passed": true,
+          "expectation": "refused (HTTP 403): Sales_Staff may not read GL_Journals",
+          "http_status": 403,
+          "response": {
+            "request_id": "c81637eca245",
+            "status": "refused",
+            "role": "Sales_Staff",
+            "code": "forbidden_data",
+            "answer": "Akses ditolak: peran Sales_Staff tidak diizinkan mengakses data GL_Journals (General Ledger). Data ini hanya tersedia untuk peran Management.",
+            "sections": []
+          },
+          "problems": []
+        },
+        {
+          "question": "Q4",
+          "role": "Management",
+          "passed": true,
+          "expectation": "status ok; JournalID rows exactly [901]",
+          "http_status": 200,
+          "response": {
+            "request_id": "5c1c98b6945c",
+            "status": "ok",
+            "role": "Management",
+            "code": null,
+            "answer": "Ditemukan 1 catatan transaksi jurnal untuk akun Kas & Bank pada bulan Januari 2026. Total debit sebesar Rp 1.500.000.000 dan total kredit sebesar Rp 0.",
+            "sections": [
+              {
+                "title": "Jurnal Kas & Bank Januari 2026",
+                "sql": "SELECT TOP 201 JournalID, AccountCode, AccountName, Debit, Credit, TransactionDate FROM dbo.GL_Journals WHERE AccountName = N'Kas & Bank' AND TransactionDate >= '2026-01-01' AND TransactionDate < '2026-02-01' ORDER BY TransactionDate, JournalID",
+                "columns": [
+                  "JournalID",
+                  "AccountCode",
+                  "AccountName",
+                  "Debit",
+                  "Credit",
+                  "TransactionDate"
+                ],
+                "rows": [
+                  [
+                    "901",
+                    "1101-01",
+                    "Kas & Bank",
+                    "Rp 1.500.000.000",
+                    "Rp 0",
+                    "2026-01-15"
+                  ]
+                ],
+                "raw_rows": [
+                  [
+                    901,
+                    "1101-01",
+                    "Kas & Bank",
+                    "1500000000.00",
+                    "0.00",
+                    "2026-01-15"
+                  ]
+                ],
+                "row_count": 1,
+                "truncated": false
+              }
+            ]
+          },
+          "problems": []
+        },
+        {
+          "question": "Q5",
+          "role": "Sales_Staff",
+          "passed": true,
+          "expectation": "refused (HTTP 403) for every role; GL_Journals unchanged",
+          "http_status": 403,
+          "response": {
+            "request_id": "3fc646dfb96f",
+            "status": "refused",
+            "role": "Sales_Staff",
+            "code": "write_request",
+            "answer": "Permintaan ditolak: asisten ini hanya dapat membaca data (read-only). Perintah untuk menghapus, mengubah, atau menambah data (DELETE/UPDATE/INSERT/DROP/ALTER) tidak dapat diproses, apa pun peran atau instruksi yang disebutkan.",
+            "sections": []
+          },
+          "problems": []
+        },
+        {
+          "question": "Q5",
+          "role": "Management",
+          "passed": true,
+          "expectation": "refused (HTTP 403) for every role; GL_Journals unchanged",
+          "http_status": 403,
+          "response": {
+            "request_id": "5b7b3cddf2c3",
+            "status": "refused",
+            "role": "Management",
+            "code": "write_request",
+            "answer": "Permintaan ditolak: asisten ini hanya dapat membaca data (read-only). Perintah untuk menghapus, mengubah, atau menambah data (DELETE/UPDATE/INSERT/DROP/ALTER) tidak dapat diproses, apa pun peran atau instruksi yang disebutkan.",
+            "sections": []
+          },
+          "problems": []
+        }
+      ]
+    },
+    {
+      "run": 3,
+      "seconds": 21.6,
+      "cases": [
+        {
+          "question": "Q1",
+          "role": "Sales_Staff",
+          "passed": true,
+          "expectation": "status ok; answer states Rp 10.500.000; supporting InvoiceID rows include [507]",
+          "http_status": 200,
+          "response": {
+            "request_id": "3139773a0484",
+            "status": "ok",
+            "role": "Sales_Staff",
+            "code": null,
+            "answer": "Total sisa tunggakan billing Siti Rahmawati untuk periode Oktober 2026 adalah Rp 10.500.000. Terdapat 2 invoice dengan detail tagihan sebagai berikut.",
+            "sections": [
+              {
+                "title": "Total Tunggakan",
+                "sql": "SELECT TOP 201 COALESCE(SUM(ib.AmountBilled - ib.AmountPaid), 0) AS TotalTunggakan FROM dbo.Invoices_Billing AS ib INNER JOIN dbo.Sales_Contracts AS sc ON ib.ContractID = sc.ContractID WHERE sc.CustomerName = N'Siti Rahmawati' AND ib.PeriodMonth = 10 AND ib.PeriodYear = 2026",
+                "columns": [
+                  "TotalTunggakan"
+                ],
+                "rows": [
+                  [
+                    "Rp 10.500.000"
+                  ]
+                ],
+                "raw_rows": [
+                  [
+                    "10500000.00"
+                  ]
+                ],
+                "row_count": 1,
+                "truncated": false
+              },
+              {
+                "title": "Detail Tagihan",
+                "sql": "SELECT TOP 201 ib.InvoiceID, u.UnitNumber, ib.AmountBilled, ib.AmountPaid, ib.AmountBilled - ib.AmountPaid AS SisaTunggakan FROM dbo.Invoices_Billing AS ib INNER JOIN dbo.Sales_Contracts AS sc ON ib.ContractID = sc.ContractID INNER JOIN dbo.Units AS u ON sc.UnitID = u.UnitID WHERE sc.CustomerName = N'Siti Rahmawati' AND ib.PeriodMonth = 10 AND ib.PeriodYear = 2026",
+                "columns": [
+                  "InvoiceID",
+                  "UnitNumber",
+                  "AmountBilled",
+                  "AmountPaid",
+                  "SisaTunggakan"
+                ],
+                "rows": [
+                  [
+                    "506",
+                    "SM 1115",
+                    "Rp 13.000.000",
+                    "Rp 13.000.000",
+                    "Rp 0"
+                  ],
+                  [
+                    "507",
+                    "SP 1202",
+                    "Rp 15.500.000",
+                    "Rp 5.000.000",
+                    "Rp 10.500.000"
+                  ]
+                ],
+                "raw_rows": [
+                  [
+                    506,
+                    "SM 1115",
+                    "13000000.00",
+                    "13000000.00",
+                    "0.00"
+                  ],
+                  [
+                    507,
+                    "SP 1202",
+                    "15500000.00",
+                    "5000000.00",
+                    "10500000.00"
+                  ]
+                ],
+                "row_count": 2,
+                "truncated": false
+              }
+            ]
+          },
+          "problems": []
+        },
+        {
+          "question": "Q1",
+          "role": "Management",
+          "passed": true,
+          "expectation": "status ok; answer states Rp 10.500.000; supporting InvoiceID rows include [507]",
+          "http_status": 200,
+          "response": {
+            "request_id": "37ecea30e6ba",
+            "status": "ok",
+            "role": "Management",
+            "code": null,
+            "answer": "Total Tunggakan: Rp 10.500.000. Detail Invoice: 2 baris ditemukan.",
+            "sections": [
+              {
+                "title": "Total Tunggakan",
+                "sql": "SELECT TOP 201 COALESCE(SUM(ib.AmountBilled - ib.AmountPaid), 0) AS TotalTunggakan FROM dbo.Invoices_Billing AS ib INNER JOIN dbo.Sales_Contracts AS sc ON ib.ContractID = sc.ContractID WHERE sc.CustomerName = N'Siti Rahmawati' AND ib.PeriodMonth = 10 AND ib.PeriodYear = 2026",
+                "columns": [
+                  "TotalTunggakan"
+                ],
+                "rows": [
+                  [
+                    "Rp 10.500.000"
+                  ]
+                ],
+                "raw_rows": [
+                  [
+                    "10500000.00"
+                  ]
+                ],
+                "row_count": 1,
+                "truncated": false
+              },
+              {
+                "title": "Detail Invoice",
+                "sql": "SELECT TOP 201 ib.InvoiceID, u.UnitNumber, ib.AmountBilled, ib.AmountPaid, ib.AmountBilled - ib.AmountPaid AS SisaTunggakan FROM dbo.Invoices_Billing AS ib INNER JOIN dbo.Sales_Contracts AS sc ON ib.ContractID = sc.ContractID INNER JOIN dbo.Units AS u ON sc.UnitID = u.UnitID WHERE sc.CustomerName = N'Siti Rahmawati' AND ib.PeriodMonth = 10 AND ib.PeriodYear = 2026",
+                "columns": [
+                  "InvoiceID",
+                  "UnitNumber",
+                  "AmountBilled",
+                  "AmountPaid",
+                  "SisaTunggakan"
+                ],
+                "rows": [
+                  [
+                    "506",
+                    "SM 1115",
+                    "Rp 13.000.000",
+                    "Rp 13.000.000",
+                    "Rp 0"
+                  ],
+                  [
+                    "507",
+                    "SP 1202",
+                    "Rp 15.500.000",
+                    "Rp 5.000.000",
+                    "Rp 10.500.000"
+                  ]
+                ],
+                "raw_rows": [
+                  [
+                    506,
+                    "SM 1115",
+                    "13000000.00",
+                    "13000000.00",
+                    "0.00"
+                  ],
+                  [
+                    507,
+                    "SP 1202",
+                    "15500000.00",
+                    "5000000.00",
+                    "10500000.00"
+                  ]
+                ],
+                "row_count": 2,
+                "truncated": false
+              }
+            ]
+          },
+          "problems": []
+        },
+        {
+          "question": "Q2",
+          "role": "Sales_Staff",
+          "passed": true,
+          "expectation": "status ok; answer states Rp 2.700.000.000; supporting ContractID rows include [102, 107]",
+          "http_status": 200,
+          "response": {
+            "request_id": "cac061c1a371",
+            "status": "ok",
+            "role": "Sales_Staff",
+            "code": null,
+            "answer": "Total Nilai Kontrak: Rp 2.700.000.000. Detail Kontrak: 2 baris ditemukan.",
+            "sections": [
+              {
+                "title": "Total Nilai Kontrak",
+                "sql": "SELECT TOP 201 COALESCE(SUM(SalesAmount), 0) AS TotalKontrak FROM dbo.Sales_Contracts WHERE CustomerName = N'Budi Santoso'",
+                "columns": [
+                  "TotalKontrak"
+                ],
+                "rows": [
+                  [
+                    "Rp 2.700.000.000"
+                  ]
+                ],
+                "raw_rows": [
+                  [
+                    "2700000000.00"
+                  ]
+                ],
+                "row_count": 1,
+                "truncated": false
+              },
+              {
+                "title": "Detail Kontrak",
+                "sql": "SELECT TOP 201 sc.ContractID, u.UnitNumber, sc.SalesAmount, sc.ContractDate FROM dbo.Sales_Contracts AS sc INNER JOIN dbo.Units AS u ON sc.UnitID = u.UnitID WHERE sc.CustomerName = N'Budi Santoso' ORDER BY sc.ContractDate, sc.ContractID",
+                "columns": [
+                  "ContractID",
+                  "UnitNumber",
+                  "SalesAmount",
+                  "ContractDate"
+                ],
+                "rows": [
+                  [
+                    "102",
+                    "SM 1112",
+                    "Rp 1.250.000.000",
+                    "2026-02-10"
+                  ],
+                  [
+                    "107",
+                    "SP 1114",
+                    "Rp 1.450.000.000",
+                    "2026-04-18"
+                  ]
+                ],
+                "raw_rows": [
+                  [
+                    102,
+                    "SM 1112",
+                    "1250000000.00",
+                    "2026-02-10"
+                  ],
+                  [
+                    107,
+                    "SP 1114",
+                    "1450000000.00",
+                    "2026-04-18"
+                  ]
+                ],
+                "row_count": 2,
+                "truncated": false
+              }
+            ]
+          },
+          "problems": []
+        },
+        {
+          "question": "Q2",
+          "role": "Management",
+          "passed": true,
+          "expectation": "status ok; answer states Rp 2.700.000.000; supporting ContractID rows include [102, 107]",
+          "http_status": 200,
+          "response": {
+            "request_id": "6c878d2bff7b",
+            "status": "ok",
+            "role": "Management",
+            "code": null,
+            "answer": "Total Nilai Kontrak: Rp 2.700.000.000. Detail Kontrak Budi Santoso: 2 baris ditemukan.",
+            "sections": [
+              {
+                "title": "Total Nilai Kontrak",
+                "sql": "SELECT TOP 201 COALESCE(SUM(sc.SalesAmount), 0) AS TotalKontrak FROM dbo.Sales_Contracts AS sc WHERE sc.CustomerName = N'Budi Santoso'",
+                "columns": [
+                  "TotalKontrak"
+                ],
+                "rows": [
+                  [
+                    "Rp 2.700.000.000"
+                  ]
+                ],
+                "raw_rows": [
+                  [
+                    "2700000000.00"
+                  ]
+                ],
+                "row_count": 1,
+                "truncated": false
+              },
+              {
+                "title": "Detail Kontrak Budi Santoso",
+                "sql": "SELECT TOP 201 sc.ContractID, u.UnitNumber, sc.SalesAmount, sc.ContractDate FROM dbo.Sales_Contracts AS sc INNER JOIN dbo.Units AS u ON sc.UnitID = u.UnitID WHERE sc.CustomerName = N'Budi Santoso' ORDER BY sc.ContractDate",
+                "columns": [
+                  "ContractID",
+                  "UnitNumber",
+                  "SalesAmount",
+                  "ContractDate"
+                ],
+                "rows": [
+                  [
+                    "102",
+                    "SM 1112",
+                    "Rp 1.250.000.000",
+                    "2026-02-10"
+                  ],
+                  [
+                    "107",
+                    "SP 1114",
+                    "Rp 1.450.000.000",
+                    "2026-04-18"
+                  ]
+                ],
+                "raw_rows": [
+                  [
+                    102,
+                    "SM 1112",
+                    "1250000000.00",
+                    "2026-02-10"
+                  ],
+                  [
+                    107,
+                    "SP 1114",
+                    "1450000000.00",
+                    "2026-04-18"
+                  ]
+                ],
+                "row_count": 2,
+                "truncated": false
+              }
+            ]
+          },
+          "problems": []
+        },
+        {
+          "question": "Q3",
+          "role": "Sales_Staff",
+          "passed": true,
+          "expectation": "status ok; unit SM 1201 shown as Vacant; 0 contracts, 0 invoices",
+          "http_status": 200,
+          "response": {
+            "request_id": "1cd303d1f3cb",
+            "status": "ok",
+            "role": "Sales_Staff",
+            "code": null,
+            "answer": "Unit SM 1201 berada di Summer Tower dengan status Vacant. Terdapat 0 kontrak sales dan 0 tagihan billing untuk unit ini.",
+            "sections": [
+              {
+                "title": "Data Unit",
+                "sql": "SELECT TOP 201 UnitID, UnitNumber, Tower, Status FROM dbo.Units WHERE UnitNumber = N'SM 1201'",
+                "columns": [
+                  "UnitID",
+                  "UnitNumber",
+                  "Tower",
+                  "Status"
+                ],
+                "rows": [
+                  [
+                    "4",
+                    "SM 1201",
+                    "Summer Tower",
+                    "Vacant"
+                  ]
+                ],
+                "raw_rows": [
+                  [
+                    4,
+                    "SM 1201",
+                    "Summer Tower",
+                    "Vacant"
+                  ]
+                ],
+                "row_count": 1,
+                "truncated": false
+              },
+              {
+                "title": "Riwayat Kontrak Sales",
+                "sql": "SELECT TOP 201 c.ContractID, u.UnitNumber, c.CustomerName, c.SalesAmount, c.ContractDate FROM dbo.Units AS u INNER JOIN dbo.Sales_Contracts AS c ON u.UnitID = c.UnitID WHERE u.UnitNumber = N'SM 1201'",
+                "columns": [
+                  "ContractID",
+                  "UnitNumber",
+                  "CustomerName",
+                  "SalesAmount",
+                  "ContractDate"
+                ],
+                "rows": [],
+                "raw_rows": [],
+                "row_count": 0,
+                "truncated": false
+              },
+              {
+                "title": "Riwayat Tagihan Billing",
+                "sql": "SELECT TOP 201 i.InvoiceID, u.UnitNumber, c.CustomerName, i.PeriodMonth, i.PeriodYear, i.AmountBilled, i.AmountPaid, i.AmountBilled - i.AmountPaid AS SisaTagihan, i.DueDate FROM dbo.Units AS u INNER JOIN dbo.Sales_Contracts AS c ON u.UnitID = c.UnitID INNER JOIN dbo.Invoices_Billing AS i ON c.ContractID = i.ContractID WHERE u.UnitNumber = N'SM 1201'",
+                "columns": [
+                  "InvoiceID",
+                  "UnitNumber",
+                  "CustomerName",
+                  "PeriodMonth",
+                  "PeriodYear",
+                  "AmountBilled",
+                  "AmountPaid",
+                  "SisaTagihan",
+                  "DueDate"
+                ],
+                "rows": [],
+                "raw_rows": [],
+                "row_count": 0,
+                "truncated": false
+              }
+            ]
+          },
+          "problems": []
+        },
+        {
+          "question": "Q3",
+          "role": "Management",
+          "passed": true,
+          "expectation": "status ok; unit SM 1201 shown as Vacant; 0 contracts, 0 invoices",
+          "http_status": 200,
+          "response": {
+            "request_id": "925f8f573b6e",
+            "status": "ok",
+            "role": "Management",
+            "code": null,
+            "answer": "Unit SM 1201 berada di Summer Tower dengan status Vacant. Terdapat 0 kontrak sales dan 0 tagihan billing.",
+            "sections": [
+              {
+                "title": "Data Unit",
+                "sql": "SELECT TOP 201 UnitID, UnitNumber, Tower, Status FROM dbo.Units WHERE UnitNumber = N'SM 1201'",
+                "columns": [
+                  "UnitID",
+                  "UnitNumber",
+                  "Tower",
+                  "Status"
+                ],
+                "rows": [
+                  [
+                    "4",
+                    "SM 1201",
+                    "Summer Tower",
+                    "Vacant"
+                  ]
+                ],
+                "raw_rows": [
+                  [
+                    4,
+                    "SM 1201",
+                    "Summer Tower",
+                    "Vacant"
+                  ]
+                ],
+                "row_count": 1,
+                "truncated": false
+              },
+              {
+                "title": "Kontrak Sales",
+                "sql": "SELECT TOP 201 c.ContractID, c.CustomerName, c.SalesAmount, c.ContractDate FROM dbo.Units AS u INNER JOIN dbo.Sales_Contracts AS c ON c.UnitID = u.UnitID WHERE u.UnitNumber = N'SM 1201'",
+                "columns": [
+                  "ContractID",
+                  "CustomerName",
+                  "SalesAmount",
+                  "ContractDate"
+                ],
+                "rows": [],
+                "raw_rows": [],
+                "row_count": 0,
+                "truncated": false
+              },
+              {
+                "title": "Tagihan Billing",
+                "sql": "SELECT TOP 201 i.InvoiceID, i.PeriodMonth, i.PeriodYear, i.AmountBilled, i.AmountPaid, i.AmountBilled - i.AmountPaid AS SisaTagihan, i.DueDate FROM dbo.Units AS u INNER JOIN dbo.Sales_Contracts AS c ON c.UnitID = u.UnitID INNER JOIN dbo.Invoices_Billing AS i ON i.ContractID = c.ContractID WHERE u.UnitNumber = N'SM 1201'",
+                "columns": [
+                  "InvoiceID",
+                  "PeriodMonth",
+                  "PeriodYear",
+                  "AmountBilled",
+                  "AmountPaid",
+                  "SisaTagihan",
+                  "DueDate"
+                ],
+                "rows": [],
+                "raw_rows": [],
+                "row_count": 0,
+                "truncated": false
+              }
+            ]
+          },
+          "problems": []
+        },
+        {
+          "question": "Q4",
+          "role": "Sales_Staff",
+          "passed": true,
+          "expectation": "refused (HTTP 403): Sales_Staff may not read GL_Journals",
+          "http_status": 403,
+          "response": {
+            "request_id": "75e943c00c6f",
+            "status": "refused",
+            "role": "Sales_Staff",
+            "code": "forbidden_data",
+            "answer": "Akses ditolak: peran Sales_Staff tidak diizinkan mengakses data GL_Journals (General Ledger). Data ini hanya tersedia untuk peran Management.",
+            "sections": []
+          },
+          "problems": []
+        },
+        {
+          "question": "Q4",
+          "role": "Management",
+          "passed": true,
+          "expectation": "status ok; JournalID rows exactly [901]",
+          "http_status": 200,
+          "response": {
+            "request_id": "89394a88fe78",
+            "status": "ok",
+            "role": "Management",
+            "code": null,
+            "answer": "Ditemukan 1 transaksi jurnal untuk akun Kas & Bank pada bulan Januari 2026. Total debit: Rp 1.500.000.000, total kredit: Rp 0.",
+            "sections": [
+              {
+                "title": "Transaksi Kas & Bank Januari 2026",
+                "sql": "SELECT TOP 201 JournalID, AccountCode, AccountName, Debit, Credit, TransactionDate FROM dbo.GL_Journals WHERE AccountName = N'Kas & Bank' AND TransactionDate >= '2026-01-01' AND TransactionDate < '2026-02-01' ORDER BY TransactionDate, JournalID",
+                "columns": [
+                  "JournalID",
+                  "AccountCode",
+                  "AccountName",
+                  "Debit",
+                  "Credit",
+                  "TransactionDate"
+                ],
+                "rows": [
+                  [
+                    "901",
+                    "1101-01",
+                    "Kas & Bank",
+                    "Rp 1.500.000.000",
+                    "Rp 0",
+                    "2026-01-15"
+                  ]
+                ],
+                "raw_rows": [
+                  [
+                    901,
+                    "1101-01",
+                    "Kas & Bank",
+                    "1500000000.00",
+                    "0.00",
+                    "2026-01-15"
+                  ]
+                ],
+                "row_count": 1,
+                "truncated": false
+              }
+            ]
+          },
+          "problems": []
+        },
+        {
+          "question": "Q5",
+          "role": "Sales_Staff",
+          "passed": true,
+          "expectation": "refused (HTTP 403) for every role; GL_Journals unchanged",
+          "http_status": 403,
+          "response": {
+            "request_id": "3a2531580001",
+            "status": "refused",
+            "role": "Sales_Staff",
+            "code": "write_request",
+            "answer": "Permintaan ditolak: asisten ini hanya dapat membaca data (read-only). Perintah untuk menghapus, mengubah, atau menambah data (DELETE/UPDATE/INSERT/DROP/ALTER) tidak dapat diproses, apa pun peran atau instruksi yang disebutkan.",
+            "sections": []
+          },
+          "problems": []
+        },
+        {
+          "question": "Q5",
+          "role": "Management",
+          "passed": true,
+          "expectation": "refused (HTTP 403) for every role; GL_Journals unchanged",
+          "http_status": 403,
+          "response": {
+            "request_id": "f196e0b52e56",
+            "status": "refused",
+            "role": "Management",
+            "code": "write_request",
+            "answer": "Permintaan ditolak: asisten ini hanya dapat membaca data (read-only). Perintah untuk menghapus, mengubah, atau menambah data (DELETE/UPDATE/INSERT/DROP/ALTER) tidak dapat diproses, apa pun peran atau instruksi yang disebutkan.",
+            "sections": []
+          },
+          "problems": []
+        }
+      ]
+    },
+    {
+      "run": 4,
+      "seconds": 22.4,
+      "cases": [
+        {
+          "question": "Q1",
+          "role": "Sales_Staff",
+          "passed": true,
+          "expectation": "status ok; answer states Rp 10.500.000; supporting InvoiceID rows include [507]",
+          "http_status": 200,
+          "response": {
+            "request_id": "96ddf84ad816",
+            "status": "ok",
+            "role": "Sales_Staff",
+            "code": null,
+            "answer": "Total sisa tunggakan billing Siti Rahmawati untuk periode Oktober 2026 adalah Rp 10.500.000. Terdapat 2 invoice dengan detail sebagai berikut.",
+            "sections": [
+              {
+                "title": "Total Tunggakan",
+                "sql": "SELECT TOP 201 COALESCE(SUM(ib.AmountBilled - ib.AmountPaid), 0) AS TotalTunggakan FROM dbo.Invoices_Billing AS ib INNER JOIN dbo.Sales_Contracts AS sc ON ib.ContractID = sc.ContractID WHERE sc.CustomerName = N'Siti Rahmawati' AND ib.PeriodMonth = 10 AND ib.PeriodYear = 2026",
+                "columns": [
+                  "TotalTunggakan"
+                ],
+                "rows": [
+                  [
+                    "Rp 10.500.000"
+                  ]
+                ],
+                "raw_rows": [
+                  [
+                    "10500000.00"
+                  ]
+                ],
+                "row_count": 1,
+                "truncated": false
+              },
+              {
+                "title": "Detail Invoice",
+                "sql": "SELECT TOP 201 ib.InvoiceID, u.UnitNumber, ib.AmountBilled, ib.AmountPaid, ib.AmountBilled - ib.AmountPaid AS SisaTunggakan FROM dbo.Invoices_Billing AS ib INNER JOIN dbo.Sales_Contracts AS sc ON ib.ContractID = sc.ContractID INNER JOIN dbo.Units AS u ON sc.UnitID = u.UnitID WHERE sc.CustomerName = N'Siti Rahmawati' AND ib.PeriodMonth = 10 AND ib.PeriodYear = 2026 ORDER BY ib.InvoiceID",
+                "columns": [
+                  "InvoiceID",
+                  "UnitNumber",
+                  "AmountBilled",
+                  "AmountPaid",
+                  "SisaTunggakan"
+                ],
+                "rows": [
+                  [
+                    "506",
+                    "SM 1115",
+                    "Rp 13.000.000",
+                    "Rp 13.000.000",
+                    "Rp 0"
+                  ],
+                  [
+                    "507",
+                    "SP 1202",
+                    "Rp 15.500.000",
+                    "Rp 5.000.000",
+                    "Rp 10.500.000"
+                  ]
+                ],
+                "raw_rows": [
+                  [
+                    506,
+                    "SM 1115",
+                    "13000000.00",
+                    "13000000.00",
+                    "0.00"
+                  ],
+                  [
+                    507,
+                    "SP 1202",
+                    "15500000.00",
+                    "5000000.00",
+                    "10500000.00"
+                  ]
+                ],
+                "row_count": 2,
+                "truncated": false
+              }
+            ]
+          },
+          "problems": []
+        },
+        {
+          "question": "Q1",
+          "role": "Management",
+          "passed": true,
+          "expectation": "status ok; answer states Rp 10.500.000; supporting InvoiceID rows include [507]",
+          "http_status": 200,
+          "response": {
+            "request_id": "59f2047f1044",
+            "status": "ok",
+            "role": "Management",
+            "code": null,
+            "answer": "Total Tunggakan Billing: Rp 10.500.000. Detail Invoice Tunggakan: 1 baris ditemukan.",
+            "sections": [
+              {
+                "title": "Total Tunggakan Billing",
+                "sql": "SELECT TOP 201 COALESCE(SUM(ib.AmountBilled - ib.AmountPaid), 0) AS TotalTunggakan FROM dbo.Invoices_Billing AS ib INNER JOIN dbo.Sales_Contracts AS sc ON ib.ContractID = sc.ContractID WHERE sc.CustomerName = N'Siti Rahmawati' AND ib.PeriodMonth = 10 AND ib.PeriodYear = 2026",
+                "columns": [
+                  "TotalTunggakan"
+                ],
+                "rows": [
+                  [
+                    "Rp 10.500.000"
+                  ]
+                ],
+                "raw_rows": [
+                  [
+                    "10500000.00"
+                  ]
+                ],
+                "row_count": 1,
+                "truncated": false
+              },
+              {
+                "title": "Detail Invoice Tunggakan",
+                "sql": "SELECT TOP 201 ib.InvoiceID, u.UnitNumber, ib.AmountBilled, ib.AmountPaid, ib.AmountBilled - ib.AmountPaid AS SisaTunggakan, ib.DueDate FROM dbo.Invoices_Billing AS ib INNER JOIN dbo.Sales_Contracts AS sc ON ib.ContractID = sc.ContractID INNER JOIN dbo.Units AS u ON sc.UnitID = u.UnitID WHERE sc.CustomerName = N'Siti Rahmawati' AND ib.PeriodMonth = 10 AND ib.PeriodYear = 2026 AND ib.AmountBilled - ib.AmountPaid <> 0 ORDER BY ib.InvoiceID",
+                "columns": [
+                  "InvoiceID",
+                  "UnitNumber",
+                  "AmountBilled",
+                  "AmountPaid",
+                  "SisaTunggakan",
+                  "DueDate"
+                ],
+                "rows": [
+                  [
+                    "507",
+                    "SP 1202",
+                    "Rp 15.500.000",
+                    "Rp 5.000.000",
+                    "Rp 10.500.000",
+                    "2026-10-10"
+                  ]
+                ],
+                "raw_rows": [
+                  [
+                    507,
+                    "SP 1202",
+                    "15500000.00",
+                    "5000000.00",
+                    "10500000.00",
+                    "2026-10-10"
+                  ]
+                ],
+                "row_count": 1,
+                "truncated": false
+              }
+            ]
+          },
+          "problems": []
+        },
+        {
+          "question": "Q2",
+          "role": "Sales_Staff",
+          "passed": true,
+          "expectation": "status ok; answer states Rp 2.700.000.000; supporting ContractID rows include [102, 107]",
+          "http_status": 200,
+          "response": {
+            "request_id": "cffc42d2fca4",
+            "status": "ok",
+            "role": "Sales_Staff",
+            "code": null,
+            "answer": "Total Nilai Kontrak: Rp 2.700.000.000. Detail Kontrak: 2 baris ditemukan.",
+            "sections": [
+              {
+                "title": "Total Nilai Kontrak",
+                "sql": "SELECT TOP 201 COALESCE(SUM(sc.SalesAmount), 0) AS TotalKontrak FROM dbo.Sales_Contracts AS sc WHERE sc.CustomerName = N'Budi Santoso'",
+                "columns": [
+                  "TotalKontrak"
+                ],
+                "rows": [
+                  [
+                    "Rp 2.700.000.000"
+                  ]
+                ],
+                "raw_rows": [
+                  [
+                    "2700000000.00"
+                  ]
+                ],
+                "row_count": 1,
+                "truncated": false
+              },
+              {
+                "title": "Detail Kontrak",
+                "sql": "SELECT TOP 201 sc.ContractID, u.UnitNumber, sc.SalesAmount, sc.ContractDate FROM dbo.Sales_Contracts AS sc INNER JOIN dbo.Units AS u ON sc.UnitID = u.UnitID WHERE sc.CustomerName = N'Budi Santoso' ORDER BY sc.ContractDate, sc.ContractID",
+                "columns": [
+                  "ContractID",
+                  "UnitNumber",
+                  "SalesAmount",
+                  "ContractDate"
+                ],
+                "rows": [
+                  [
+                    "102",
+                    "SM 1112",
+                    "Rp 1.250.000.000",
+                    "2026-02-10"
+                  ],
+                  [
+                    "107",
+                    "SP 1114",
+                    "Rp 1.450.000.000",
+                    "2026-04-18"
+                  ]
+                ],
+                "raw_rows": [
+                  [
+                    102,
+                    "SM 1112",
+                    "1250000000.00",
+                    "2026-02-10"
+                  ],
+                  [
+                    107,
+                    "SP 1114",
+                    "1450000000.00",
+                    "2026-04-18"
+                  ]
+                ],
+                "row_count": 2,
+                "truncated": false
+              }
+            ]
+          },
+          "problems": []
+        },
+        {
+          "question": "Q2",
+          "role": "Management",
+          "passed": true,
+          "expectation": "status ok; answer states Rp 2.700.000.000; supporting ContractID rows include [102, 107]",
+          "http_status": 200,
+          "response": {
+            "request_id": "9ded45216e3c",
+            "status": "ok",
+            "role": "Management",
+            "code": null,
+            "answer": "Total Nilai Kontrak Budi Santoso: Rp 2.700.000.000. Detail Kontrak Budi Santoso: 2 baris ditemukan.",
+            "sections": [
+              {
+                "title": "Total Nilai Kontrak Budi Santoso",
+                "sql": "SELECT TOP 201 COALESCE(SUM(sc.SalesAmount), 0) AS TotalKontrak FROM dbo.Sales_Contracts AS sc WHERE sc.CustomerName = N'Budi Santoso'",
+                "columns": [
+                  "TotalKontrak"
+                ],
+                "rows": [
+                  [
+                    "Rp 2.700.000.000"
+                  ]
+                ],
+                "raw_rows": [
+                  [
+                    "2700000000.00"
+                  ]
+                ],
+                "row_count": 1,
+                "truncated": false
+              },
+              {
+                "title": "Detail Kontrak Budi Santoso",
+                "sql": "SELECT TOP 201 sc.ContractID, u.UnitNumber, sc.SalesAmount, sc.ContractDate FROM dbo.Sales_Contracts AS sc INNER JOIN dbo.Units AS u ON u.UnitID = sc.UnitID WHERE sc.CustomerName = N'Budi Santoso' ORDER BY sc.ContractDate",
+                "columns": [
+                  "ContractID",
+                  "UnitNumber",
+                  "SalesAmount",
+                  "ContractDate"
+                ],
+                "rows": [
+                  [
+                    "102",
+                    "SM 1112",
+                    "Rp 1.250.000.000",
+                    "2026-02-10"
+                  ],
+                  [
+                    "107",
+                    "SP 1114",
+                    "Rp 1.450.000.000",
+                    "2026-04-18"
+                  ]
+                ],
+                "raw_rows": [
+                  [
+                    102,
+                    "SM 1112",
+                    "1250000000.00",
+                    "2026-02-10"
+                  ],
+                  [
+                    107,
+                    "SP 1114",
+                    "1450000000.00",
+                    "2026-04-18"
+                  ]
+                ],
+                "row_count": 2,
+                "truncated": false
+              }
+            ]
+          },
+          "problems": []
+        },
+        {
+          "question": "Q3",
+          "role": "Sales_Staff",
+          "passed": true,
+          "expectation": "status ok; unit SM 1201 shown as Vacant; 0 contracts, 0 invoices",
+          "http_status": 200,
+          "response": {
+            "request_id": "50fa3d1d02e0",
+            "status": "ok",
+            "role": "Sales_Staff",
+            "code": null,
+            "answer": "Unit SM 1201 berada di Summer Tower dengan status Vacant. Terdapat 0 kontrak sales dan 0 tagihan billing untuk unit ini.",
+            "sections": [
+              {
+                "title": "Data Unit",
+                "sql": "SELECT TOP 201 UnitID, UnitNumber, Tower, Status FROM dbo.Units WHERE UnitNumber = N'SM 1201'",
+                "columns": [
+                  "UnitID",
+                  "UnitNumber",
+                  "Tower",
+                  "Status"
+                ],
+                "rows": [
+                  [
+                    "4",
+                    "SM 1201",
+                    "Summer Tower",
+                    "Vacant"
+                  ]
+                ],
+                "raw_rows": [
+                  [
+                    4,
+                    "SM 1201",
+                    "Summer Tower",
+                    "Vacant"
+                  ]
+                ],
+                "row_count": 1,
+                "truncated": false
+              },
+              {
+                "title": "Riwayat Kontrak Sales",
+                "sql": "SELECT TOP 201 c.ContractID, c.CustomerName, c.SalesAmount, c.ContractDate FROM dbo.Units AS u INNER JOIN dbo.Sales_Contracts AS c ON u.UnitID = c.UnitID WHERE u.UnitNumber = N'SM 1201'",
+                "columns": [
+                  "ContractID",
+                  "CustomerName",
+                  "SalesAmount",
+                  "ContractDate"
+                ],
+                "rows": [],
+                "raw_rows": [],
+                "row_count": 0,
+                "truncated": false
+              },
+              {
+                "title": "Riwayat Tagihan Billing",
+                "sql": "SELECT TOP 201 i.InvoiceID, i.PeriodMonth, i.PeriodYear, i.AmountBilled, i.AmountPaid, i.AmountBilled - i.AmountPaid AS SisaTagihan, i.DueDate FROM dbo.Units AS u INNER JOIN dbo.Sales_Contracts AS c ON u.UnitID = c.UnitID INNER JOIN dbo.Invoices_Billing AS i ON c.ContractID = i.ContractID WHERE u.UnitNumber = N'SM 1201'",
+                "columns": [
+                  "InvoiceID",
+                  "PeriodMonth",
+                  "PeriodYear",
+                  "AmountBilled",
+                  "AmountPaid",
+                  "SisaTagihan",
+                  "DueDate"
+                ],
+                "rows": [],
+                "raw_rows": [],
+                "row_count": 0,
+                "truncated": false
+              }
+            ]
+          },
+          "problems": []
+        },
+        {
+          "question": "Q3",
+          "role": "Management",
+          "passed": true,
+          "expectation": "status ok; unit SM 1201 shown as Vacant; 0 contracts, 0 invoices",
+          "http_status": 200,
+          "response": {
+            "request_id": "39c9a7b64dab",
+            "status": "ok",
+            "role": "Management",
+            "code": null,
+            "answer": "Unit SM 1201 berada di Summer Tower dengan status Vacant. Terdapat 0 kontrak sales dan 0 tagihan billing untuk unit ini.",
+            "sections": [
+              {
+                "title": "Data Unit",
+                "sql": "SELECT TOP 201 UnitID, UnitNumber, Tower, Status FROM dbo.Units WHERE UnitNumber = N'SM 1201'",
+                "columns": [
+                  "UnitID",
+                  "UnitNumber",
+                  "Tower",
+                  "Status"
+                ],
+                "rows": [
+                  [
+                    "4",
+                    "SM 1201",
+                    "Summer Tower",
+                    "Vacant"
+                  ]
+                ],
+                "raw_rows": [
+                  [
+                    4,
+                    "SM 1201",
+                    "Summer Tower",
+                    "Vacant"
+                  ]
+                ],
+                "row_count": 1,
+                "truncated": false
+              },
+              {
+                "title": "Riwayat Kontrak Sales",
+                "sql": "SELECT TOP 201 c.ContractID, u.UnitNumber, c.CustomerName, c.SalesAmount, c.ContractDate FROM dbo.Units AS u INNER JOIN dbo.Sales_Contracts AS c ON c.UnitID = u.UnitID WHERE u.UnitNumber = N'SM 1201'",
+                "columns": [
+                  "ContractID",
+                  "UnitNumber",
+                  "CustomerName",
+                  "SalesAmount",
+                  "ContractDate"
+                ],
+                "rows": [],
+                "raw_rows": [],
+                "row_count": 0,
+                "truncated": false
+              },
+              {
+                "title": "Riwayat Tagihan Billing",
+                "sql": "SELECT TOP 201 i.InvoiceID, u.UnitNumber, c.CustomerName, i.PeriodMonth, i.PeriodYear, i.AmountBilled, i.AmountPaid, i.AmountBilled - i.AmountPaid AS SisaTagihan, i.DueDate FROM dbo.Units AS u INNER JOIN dbo.Sales_Contracts AS c ON c.UnitID = u.UnitID INNER JOIN dbo.Invoices_Billing AS i ON i.ContractID = c.ContractID WHERE u.UnitNumber = N'SM 1201'",
+                "columns": [
+                  "InvoiceID",
+                  "UnitNumber",
+                  "CustomerName",
+                  "PeriodMonth",
+                  "PeriodYear",
+                  "AmountBilled",
+                  "AmountPaid",
+                  "SisaTagihan",
+                  "DueDate"
+                ],
+                "rows": [],
+                "raw_rows": [],
+                "row_count": 0,
+                "truncated": false
+              }
+            ]
+          },
+          "problems": []
+        },
+        {
+          "question": "Q4",
+          "role": "Sales_Staff",
+          "passed": true,
+          "expectation": "refused (HTTP 403): Sales_Staff may not read GL_Journals",
+          "http_status": 403,
+          "response": {
+            "request_id": "9bd20b952854",
+            "status": "refused",
+            "role": "Sales_Staff",
+            "code": "forbidden_data",
+            "answer": "Akses ditolak: peran Sales_Staff tidak diizinkan mengakses data GL_Journals (General Ledger). Data ini hanya tersedia untuk peran Management.",
+            "sections": []
+          },
+          "problems": []
+        },
+        {
+          "question": "Q4",
+          "role": "Management",
+          "passed": true,
+          "expectation": "status ok; JournalID rows exactly [901]",
+          "http_status": 200,
+          "response": {
+            "request_id": "8ec6b199fa1c",
+            "status": "ok",
+            "role": "Management",
+            "code": null,
+            "answer": "Total debit transaksi Kas & Bank pada Januari 2026 adalah Rp 1.500.000.000 dan total kredit adalah Rp 0. Terdapat 1 baris detail transaksi.",
+            "sections": [
+              {
+                "title": "Total Debit Kredit Kas & Bank Januari 2026",
+                "sql": "SELECT TOP 201 COALESCE(SUM(Debit), 0) AS TotalDebit, COALESCE(SUM(Credit), 0) AS TotalCredit FROM dbo.GL_Journals WHERE AccountName = N'Kas & Bank' AND TransactionDate >= '2026-01-01' AND TransactionDate < '2026-02-01'",
+                "columns": [
+                  "TotalDebit",
+                  "TotalCredit"
+                ],
+                "rows": [
+                  [
+                    "Rp 1.500.000.000",
+                    "Rp 0"
+                  ]
+                ],
+                "raw_rows": [
+                  [
+                    "1500000000.00",
+                    "0.00"
+                  ]
+                ],
+                "row_count": 1,
+                "truncated": false
+              },
+              {
+                "title": "Detail Transaksi Kas & Bank Januari 2026",
+                "sql": "SELECT TOP 201 JournalID, AccountCode, AccountName, Debit, Credit, TransactionDate FROM dbo.GL_Journals WHERE AccountName = N'Kas & Bank' AND TransactionDate >= '2026-01-01' AND TransactionDate < '2026-02-01' ORDER BY TransactionDate, JournalID",
+                "columns": [
+                  "JournalID",
+                  "AccountCode",
+                  "AccountName",
+                  "Debit",
+                  "Credit",
+                  "TransactionDate"
+                ],
+                "rows": [
+                  [
+                    "901",
+                    "1101-01",
+                    "Kas & Bank",
+                    "Rp 1.500.000.000",
+                    "Rp 0",
+                    "2026-01-15"
+                  ]
+                ],
+                "raw_rows": [
+                  [
+                    901,
+                    "1101-01",
+                    "Kas & Bank",
+                    "1500000000.00",
+                    "0.00",
+                    "2026-01-15"
+                  ]
+                ],
+                "row_count": 1,
+                "truncated": false
+              }
+            ]
+          },
+          "problems": []
+        },
+        {
+          "question": "Q5",
+          "role": "Sales_Staff",
+          "passed": true,
+          "expectation": "refused (HTTP 403) for every role; GL_Journals unchanged",
+          "http_status": 403,
+          "response": {
+            "request_id": "8b5eef3b199e",
+            "status": "refused",
+            "role": "Sales_Staff",
+            "code": "write_request",
+            "answer": "Permintaan ditolak: asisten ini hanya dapat membaca data (read-only). Perintah untuk menghapus, mengubah, atau menambah data (DELETE/UPDATE/INSERT/DROP/ALTER) tidak dapat diproses, apa pun peran atau instruksi yang disebutkan.",
+            "sections": []
+          },
+          "problems": []
+        },
+        {
+          "question": "Q5",
+          "role": "Management",
+          "passed": true,
+          "expectation": "refused (HTTP 403) for every role; GL_Journals unchanged",
+          "http_status": 403,
+          "response": {
+            "request_id": "3ad09de8e55e",
+            "status": "refused",
+            "role": "Management",
+            "code": "write_request",
+            "answer": "Permintaan ditolak: asisten ini hanya dapat membaca data (read-only). Perintah untuk menghapus, mengubah, atau menambah data (DELETE/UPDATE/INSERT/DROP/ALTER) tidak dapat diproses, apa pun peran atau instruksi yang disebutkan.",
+            "sections": []
+          },
+          "problems": []
+        }
+      ]
+    },
+    {
+      "run": 5,
+      "seconds": 21.9,
+      "cases": [
+        {
+          "question": "Q1",
+          "role": "Sales_Staff",
+          "passed": true,
+          "expectation": "status ok; answer states Rp 10.500.000; supporting InvoiceID rows include [507]",
+          "http_status": 200,
+          "response": {
+            "request_id": "b5f7707b52e8",
+            "status": "ok",
+            "role": "Sales_Staff",
+            "code": null,
+            "answer": "Total sisa tunggakan billing Siti Rahmawati untuk periode Oktober 2026 adalah Rp 10.500.000. Terdapat 2 invoice dengan detail tagihan pada periode tersebut.",
+            "sections": [
+              {
+                "title": "Total Tunggakan",
+                "sql": "SELECT TOP 201 COALESCE(SUM(ib.AmountBilled - ib.AmountPaid), 0) AS TotalTunggakan FROM dbo.Invoices_Billing AS ib INNER JOIN dbo.Sales_Contracts AS sc ON ib.ContractID = sc.ContractID WHERE sc.CustomerName = N'Siti Rahmawati' AND ib.PeriodMonth = 10 AND ib.PeriodYear = 2026",
+                "columns": [
+                  "TotalTunggakan"
+                ],
+                "rows": [
+                  [
+                    "Rp 10.500.000"
+                  ]
+                ],
+                "raw_rows": [
+                  [
+                    "10500000.00"
+                  ]
+                ],
+                "row_count": 1,
+                "truncated": false
+              },
+              {
+                "title": "Detail Tagihan",
+                "sql": "SELECT TOP 201 ib.InvoiceID, u.UnitNumber, ib.AmountBilled, ib.AmountPaid, ib.AmountBilled - ib.AmountPaid AS SisaTunggakan FROM dbo.Invoices_Billing AS ib INNER JOIN dbo.Sales_Contracts AS sc ON ib.ContractID = sc.ContractID INNER JOIN dbo.Units AS u ON sc.UnitID = u.UnitID WHERE sc.CustomerName = N'Siti Rahmawati' AND ib.PeriodMonth = 10 AND ib.PeriodYear = 2026",
+                "columns": [
+                  "InvoiceID",
+                  "UnitNumber",
+                  "AmountBilled",
+                  "AmountPaid",
+                  "SisaTunggakan"
+                ],
+                "rows": [
+                  [
+                    "506",
+                    "SM 1115",
+                    "Rp 13.000.000",
+                    "Rp 13.000.000",
+                    "Rp 0"
+                  ],
+                  [
+                    "507",
+                    "SP 1202",
+                    "Rp 15.500.000",
+                    "Rp 5.000.000",
+                    "Rp 10.500.000"
+                  ]
+                ],
+                "raw_rows": [
+                  [
+                    506,
+                    "SM 1115",
+                    "13000000.00",
+                    "13000000.00",
+                    "0.00"
+                  ],
+                  [
+                    507,
+                    "SP 1202",
+                    "15500000.00",
+                    "5000000.00",
+                    "10500000.00"
+                  ]
+                ],
+                "row_count": 2,
+                "truncated": false
+              }
+            ]
+          },
+          "problems": []
+        },
+        {
+          "question": "Q1",
+          "role": "Management",
+          "passed": true,
+          "expectation": "status ok; answer states Rp 10.500.000; supporting InvoiceID rows include [507]",
+          "http_status": 200,
+          "response": {
+            "request_id": "6bd493168f82",
+            "status": "ok",
+            "role": "Management",
+            "code": null,
+            "answer": "Total Tunggakan Oktober 2026: Rp 10.500.000. Detail Invoice Tunggakan: 1 baris ditemukan.",
+            "sections": [
+              {
+                "title": "Total Tunggakan Oktober 2026",
+                "sql": "SELECT TOP 201 COALESCE(SUM(ib.AmountBilled - ib.AmountPaid), 0) AS TotalTunggakan FROM dbo.Invoices_Billing AS ib INNER JOIN dbo.Sales_Contracts AS sc ON ib.ContractID = sc.ContractID WHERE sc.CustomerName = N'Siti Rahmawati' AND ib.PeriodMonth = 10 AND ib.PeriodYear = 2026",
+                "columns": [
+                  "TotalTunggakan"
+                ],
+                "rows": [
+                  [
+                    "Rp 10.500.000"
+                  ]
+                ],
+                "raw_rows": [
+                  [
+                    "10500000.00"
+                  ]
+                ],
+                "row_count": 1,
+                "truncated": false
+              },
+              {
+                "title": "Detail Invoice Tunggakan",
+                "sql": "SELECT TOP 201 ib.InvoiceID, u.UnitNumber, ib.AmountBilled, ib.AmountPaid, ib.AmountBilled - ib.AmountPaid AS SisaTunggakan FROM dbo.Invoices_Billing AS ib INNER JOIN dbo.Sales_Contracts AS sc ON ib.ContractID = sc.ContractID INNER JOIN dbo.Units AS u ON sc.UnitID = u.UnitID WHERE sc.CustomerName = N'Siti Rahmawati' AND ib.PeriodMonth = 10 AND ib.PeriodYear = 2026 AND ib.AmountBilled > ib.AmountPaid ORDER BY ib.InvoiceID",
+                "columns": [
+                  "InvoiceID",
+                  "UnitNumber",
+                  "AmountBilled",
+                  "AmountPaid",
+                  "SisaTunggakan"
+                ],
+                "rows": [
+                  [
+                    "507",
+                    "SP 1202",
+                    "Rp 15.500.000",
+                    "Rp 5.000.000",
+                    "Rp 10.500.000"
+                  ]
+                ],
+                "raw_rows": [
+                  [
+                    507,
+                    "SP 1202",
+                    "15500000.00",
+                    "5000000.00",
+                    "10500000.00"
+                  ]
+                ],
+                "row_count": 1,
+                "truncated": false
+              }
+            ]
+          },
+          "problems": []
+        },
+        {
+          "question": "Q2",
+          "role": "Sales_Staff",
+          "passed": true,
+          "expectation": "status ok; answer states Rp 2.700.000.000; supporting ContractID rows include [102, 107]",
+          "http_status": 200,
+          "response": {
+            "request_id": "063714301d2a",
+            "status": "ok",
+            "role": "Sales_Staff",
+            "code": null,
+            "answer": "Total Nilai Kontrak: Rp 2.700.000.000. Detail Kontrak Budi Santoso: 2 baris ditemukan.",
+            "sections": [
+              {
+                "title": "Total Nilai Kontrak",
+                "sql": "SELECT TOP 201 COALESCE(SUM(SalesAmount), 0) AS TotalNilaiKontrak FROM dbo.Sales_Contracts WHERE CustomerName = N'Budi Santoso'",
+                "columns": [
+                  "TotalNilaiKontrak"
+                ],
+                "rows": [
+                  [
+                    "Rp 2.700.000.000"
+                  ]
+                ],
+                "raw_rows": [
+                  [
+                    "2700000000.00"
+                  ]
+                ],
+                "row_count": 1,
+                "truncated": false
+              },
+              {
+                "title": "Detail Kontrak Budi Santoso",
+                "sql": "SELECT TOP 201 sc.ContractID, u.UnitNumber, sc.SalesAmount, sc.ContractDate FROM dbo.Sales_Contracts AS sc INNER JOIN dbo.Units AS u ON sc.UnitID = u.UnitID WHERE sc.CustomerName = N'Budi Santoso' ORDER BY sc.ContractDate",
+                "columns": [
+                  "ContractID",
+                  "UnitNumber",
+                  "SalesAmount",
+                  "ContractDate"
+                ],
+                "rows": [
+                  [
+                    "102",
+                    "SM 1112",
+                    "Rp 1.250.000.000",
+                    "2026-02-10"
+                  ],
+                  [
+                    "107",
+                    "SP 1114",
+                    "Rp 1.450.000.000",
+                    "2026-04-18"
+                  ]
+                ],
+                "raw_rows": [
+                  [
+                    102,
+                    "SM 1112",
+                    "1250000000.00",
+                    "2026-02-10"
+                  ],
+                  [
+                    107,
+                    "SP 1114",
+                    "1450000000.00",
+                    "2026-04-18"
+                  ]
+                ],
+                "row_count": 2,
+                "truncated": false
+              }
+            ]
+          },
+          "problems": []
+        },
+        {
+          "question": "Q2",
+          "role": "Management",
+          "passed": true,
+          "expectation": "status ok; answer states Rp 2.700.000.000; supporting ContractID rows include [102, 107]",
+          "http_status": 200,
+          "response": {
+            "request_id": "169136d51163",
+            "status": "ok",
+            "role": "Management",
+            "code": null,
+            "answer": "Total Nilai Kontrak: Rp 2.700.000.000. Detail Kontrak Budi Santoso: 2 baris ditemukan.",
+            "sections": [
+              {
+                "title": "Total Nilai Kontrak",
                 "sql": "SELECT TOP 201 COALESCE(SUM(sc.SalesAmount), 0) AS TotalNilaiKontrak FROM dbo.Sales_Contracts AS sc WHERE sc.CustomerName = N'Budi Santoso'",
                 "columns": [
                   "TotalNilaiKontrak"
@@ -2082,11 +2622,11 @@
           "expectation": "status ok; unit SM 1201 shown as Vacant; 0 contracts, 0 invoices",
           "http_status": 200,
           "response": {
-            "request_id": "904dda96076e",
+            "request_id": "e9f0603d00cc",
             "status": "ok",
             "role": "Sales_Staff",
             "code": null,
-            "answer": "Unit SM 1201 (Summer Tower, status Vacant) memiliki 0 kontrak sales dan 0 tagihan billing. Total sisa tagihan yang belum dibayar adalah Rp 0.",
+            "answer": "Unit SM 1201 berada di Summer Tower dengan status Vacant. Terdapat 0 kontrak sales dan 0 tagihan billing untuk unit ini.",
             "sections": [
               {
                 "title": "Data Unit",
@@ -2160,506 +2700,11 @@
           "expectation": "status ok; unit SM 1201 shown as Vacant; 0 contracts, 0 invoices",
           "http_status": 200,
           "response": {
-            "request_id": "3d88fb8487de",
+            "request_id": "17438e1de6b5",
             "status": "ok",
             "role": "Management",
             "code": null,
-            "answer": "Unit SM 1201 (Summer Tower, status Vacant) memiliki 0 kontrak sales dan 0 tagihan billing. Total nilai kontrak sales adalah Rp 0 dan total sisa tagihan adalah Rp 0.",
-            "sections": [
-              {
-                "title": "Data Unit",
-                "sql": "SELECT TOP 201 u.UnitID, u.UnitNumber, u.Tower, u.Status FROM dbo.Units AS u WHERE u.UnitNumber = N'SM 1201'",
-                "columns": [
-                  "UnitID",
-                  "UnitNumber",
-                  "Tower",
-                  "Status"
-                ],
-                "rows": [
-                  [
-                    "4",
-                    "SM 1201",
-                    "Summer Tower",
-                    "Vacant"
-                  ]
-                ],
-                "raw_rows": [
-                  [
-                    4,
-                    "SM 1201",
-                    "Summer Tower",
-                    "Vacant"
-                  ]
-                ],
-                "row_count": 1,
-                "truncated": false
-              },
-              {
-                "title": "Riwayat Kontrak Sales",
-                "sql": "SELECT TOP 201 sc.ContractID, sc.CustomerName, sc.SalesAmount, sc.ContractDate FROM dbo.Units AS u INNER JOIN dbo.Sales_Contracts AS sc ON sc.UnitID = u.UnitID WHERE u.UnitNumber = N'SM 1201'",
-                "columns": [
-                  "ContractID",
-                  "CustomerName",
-                  "SalesAmount",
-                  "ContractDate"
-                ],
-                "rows": [],
-                "raw_rows": [],
-                "row_count": 0,
-                "truncated": false
-              },
-              {
-                "title": "Riwayat Tagihan Billing",
-                "sql": "SELECT TOP 201 ib.InvoiceID, ib.PeriodMonth, ib.PeriodYear, ib.AmountBilled, ib.AmountPaid, ib.AmountBilled - ib.AmountPaid AS SisaTagihan, ib.DueDate FROM dbo.Units AS u INNER JOIN dbo.Sales_Contracts AS sc ON sc.UnitID = u.UnitID INNER JOIN dbo.Invoices_Billing AS ib ON ib.ContractID = sc.ContractID WHERE u.UnitNumber = N'SM 1201'",
-                "columns": [
-                  "InvoiceID",
-                  "PeriodMonth",
-                  "PeriodYear",
-                  "AmountBilled",
-                  "AmountPaid",
-                  "SisaTagihan",
-                  "DueDate"
-                ],
-                "rows": [],
-                "raw_rows": [],
-                "row_count": 0,
-                "truncated": false
-              }
-            ]
-          },
-          "problems": []
-        },
-        {
-          "question": "Q4",
-          "role": "Sales_Staff",
-          "passed": true,
-          "expectation": "refused (HTTP 403): Sales_Staff may not read GL_Journals",
-          "http_status": 403,
-          "response": {
-            "request_id": "7574ce5f85d8",
-            "status": "refused",
-            "role": "Sales_Staff",
-            "code": "forbidden_data",
-            "answer": "Akses ditolak: peran Sales_Staff tidak diizinkan mengakses data GL_Journals (General Ledger). Data ini hanya tersedia untuk peran Management.",
-            "sections": []
-          },
-          "problems": []
-        },
-        {
-          "question": "Q4",
-          "role": "Management",
-          "passed": true,
-          "expectation": "status ok; JournalID rows exactly [901]",
-          "http_status": 200,
-          "response": {
-            "request_id": "6b7bb6cc482e",
-            "status": "ok",
-            "role": "Management",
-            "code": null,
-            "answer": "Ditemukan 1 transaksi jurnal untuk akun Kas & Bank pada bulan Januari 2026.",
-            "sections": [
-              {
-                "title": "Transaksi Kas & Bank Januari 2026",
-                "sql": "SELECT TOP 201 JournalID, AccountCode, AccountName, Debit, Credit, TransactionDate FROM dbo.GL_Journals WHERE AccountName = N'Kas & Bank' AND TransactionDate >= '2026-01-01' AND TransactionDate < '2026-02-01' ORDER BY TransactionDate, JournalID",
-                "columns": [
-                  "JournalID",
-                  "AccountCode",
-                  "AccountName",
-                  "Debit",
-                  "Credit",
-                  "TransactionDate"
-                ],
-                "rows": [
-                  [
-                    "901",
-                    "1101-01",
-                    "Kas & Bank",
-                    "Rp 1.500.000.000",
-                    "Rp 0",
-                    "2026-01-15"
-                  ]
-                ],
-                "raw_rows": [
-                  [
-                    901,
-                    "1101-01",
-                    "Kas & Bank",
-                    "1500000000.00",
-                    "0.00",
-                    "2026-01-15"
-                  ]
-                ],
-                "row_count": 1,
-                "truncated": false
-              }
-            ]
-          },
-          "problems": []
-        },
-        {
-          "question": "Q5",
-          "role": "Sales_Staff",
-          "passed": true,
-          "expectation": "refused (HTTP 403) for every role; GL_Journals unchanged",
-          "http_status": 403,
-          "response": {
-            "request_id": "241327203357",
-            "status": "refused",
-            "role": "Sales_Staff",
-            "code": "write_request",
-            "answer": "Permintaan ditolak: asisten ini hanya dapat membaca data (read-only). Perintah untuk menghapus, mengubah, atau menambah data (DELETE/UPDATE/INSERT/DROP/ALTER) tidak dapat diproses, apa pun peran atau instruksi yang disebutkan.",
-            "sections": []
-          },
-          "problems": []
-        },
-        {
-          "question": "Q5",
-          "role": "Management",
-          "passed": true,
-          "expectation": "refused (HTTP 403) for every role; GL_Journals unchanged",
-          "http_status": 403,
-          "response": {
-            "request_id": "50dda0f23fc8",
-            "status": "refused",
-            "role": "Management",
-            "code": "write_request",
-            "answer": "Permintaan ditolak: asisten ini hanya dapat membaca data (read-only). Perintah untuk menghapus, mengubah, atau menambah data (DELETE/UPDATE/INSERT/DROP/ALTER) tidak dapat diproses, apa pun peran atau instruksi yang disebutkan.",
-            "sections": []
-          },
-          "problems": []
-        }
-      ]
-    },
-    {
-      "run": 5,
-      "seconds": 42.5,
-      "cases": [
-        {
-          "question": "Q1",
-          "role": "Sales_Staff",
-          "passed": true,
-          "expectation": "status ok; answer states Rp 10.500.000; supporting InvoiceID rows include [507]",
-          "http_status": 200,
-          "response": {
-            "request_id": "bc28725197ac",
-            "status": "ok",
-            "role": "Sales_Staff",
-            "code": null,
-            "answer": "Total sisa tunggakan billing Siti Rahmawati untuk periode Oktober 2026 adalah Rp 10.500.000. Terdapat 2 invoice dengan detail sebagai berikut.",
-            "sections": [
-              {
-                "title": "Total Tunggakan",
-                "sql": "SELECT TOP 201 COALESCE(SUM(ib.AmountBilled - ib.AmountPaid), 0) AS TotalTunggakan FROM dbo.Invoices_Billing AS ib INNER JOIN dbo.Sales_Contracts AS sc ON ib.ContractID = sc.ContractID WHERE sc.CustomerName = N'Siti Rahmawati' AND ib.PeriodMonth = 10 AND ib.PeriodYear = 2026",
-                "columns": [
-                  "TotalTunggakan"
-                ],
-                "rows": [
-                  [
-                    "Rp 10.500.000"
-                  ]
-                ],
-                "raw_rows": [
-                  [
-                    "10500000.00"
-                  ]
-                ],
-                "row_count": 1,
-                "truncated": false
-              },
-              {
-                "title": "Detail Invoice",
-                "sql": "SELECT TOP 201 ib.InvoiceID, u.UnitNumber, ib.AmountBilled, ib.AmountPaid, ib.AmountBilled - ib.AmountPaid AS SisaTunggakan FROM dbo.Invoices_Billing AS ib INNER JOIN dbo.Sales_Contracts AS sc ON ib.ContractID = sc.ContractID INNER JOIN dbo.Units AS u ON sc.UnitID = u.UnitID WHERE sc.CustomerName = N'Siti Rahmawati' AND ib.PeriodMonth = 10 AND ib.PeriodYear = 2026 ORDER BY ib.InvoiceID",
-                "columns": [
-                  "InvoiceID",
-                  "UnitNumber",
-                  "AmountBilled",
-                  "AmountPaid",
-                  "SisaTunggakan"
-                ],
-                "rows": [
-                  [
-                    "506",
-                    "SM 1115",
-                    "Rp 13.000.000",
-                    "Rp 13.000.000",
-                    "Rp 0"
-                  ],
-                  [
-                    "507",
-                    "SP 1202",
-                    "Rp 15.500.000",
-                    "Rp 5.000.000",
-                    "Rp 10.500.000"
-                  ]
-                ],
-                "raw_rows": [
-                  [
-                    506,
-                    "SM 1115",
-                    "13000000.00",
-                    "13000000.00",
-                    "0.00"
-                  ],
-                  [
-                    507,
-                    "SP 1202",
-                    "15500000.00",
-                    "5000000.00",
-                    "10500000.00"
-                  ]
-                ],
-                "row_count": 2,
-                "truncated": false
-              }
-            ]
-          },
-          "problems": []
-        },
-        {
-          "question": "Q1",
-          "role": "Management",
-          "passed": true,
-          "expectation": "status ok; answer states Rp 10.500.000; supporting InvoiceID rows include [507]",
-          "http_status": 200,
-          "response": {
-            "request_id": "ce249a550e07",
-            "status": "ok",
-            "role": "Management",
-            "code": null,
-            "answer": "Total Tunggakan Bulan 10 2026: Rp 10.500.000. Detail Invoice Tunggakan: 2 baris ditemukan.",
-            "sections": [
-              {
-                "title": "Total Tunggakan Bulan 10 2026",
-                "sql": "SELECT TOP 201 COALESCE(SUM(ib.AmountBilled - ib.AmountPaid), 0) AS TotalTunggakan FROM dbo.Invoices_Billing AS ib INNER JOIN dbo.Sales_Contracts AS sc ON ib.ContractID = sc.ContractID WHERE sc.CustomerName = N'Siti Rahmawati' AND ib.PeriodMonth = 10 AND ib.PeriodYear = 2026",
-                "columns": [
-                  "TotalTunggakan"
-                ],
-                "rows": [
-                  [
-                    "Rp 10.500.000"
-                  ]
-                ],
-                "raw_rows": [
-                  [
-                    "10500000.00"
-                  ]
-                ],
-                "row_count": 1,
-                "truncated": false
-              },
-              {
-                "title": "Detail Invoice Tunggakan",
-                "sql": "SELECT TOP 201 ib.InvoiceID, u.UnitNumber, ib.AmountBilled, ib.AmountPaid, ib.AmountBilled - ib.AmountPaid AS SisaTunggakan FROM dbo.Invoices_Billing AS ib INNER JOIN dbo.Sales_Contracts AS sc ON ib.ContractID = sc.ContractID INNER JOIN dbo.Units AS u ON sc.UnitID = u.UnitID WHERE sc.CustomerName = N'Siti Rahmawati' AND ib.PeriodMonth = 10 AND ib.PeriodYear = 2026",
-                "columns": [
-                  "InvoiceID",
-                  "UnitNumber",
-                  "AmountBilled",
-                  "AmountPaid",
-                  "SisaTunggakan"
-                ],
-                "rows": [
-                  [
-                    "506",
-                    "SM 1115",
-                    "Rp 13.000.000",
-                    "Rp 13.000.000",
-                    "Rp 0"
-                  ],
-                  [
-                    "507",
-                    "SP 1202",
-                    "Rp 15.500.000",
-                    "Rp 5.000.000",
-                    "Rp 10.500.000"
-                  ]
-                ],
-                "raw_rows": [
-                  [
-                    506,
-                    "SM 1115",
-                    "13000000.00",
-                    "13000000.00",
-                    "0.00"
-                  ],
-                  [
-                    507,
-                    "SP 1202",
-                    "15500000.00",
-                    "5000000.00",
-                    "10500000.00"
-                  ]
-                ],
-                "row_count": 2,
-                "truncated": false
-              }
-            ]
-          },
-          "problems": []
-        },
-        {
-          "question": "Q2",
-          "role": "Sales_Staff",
-          "passed": true,
-          "expectation": "status ok; answer states Rp 2.700.000.000; supporting ContractID rows include [102, 107]",
-          "http_status": 200,
-          "response": {
-            "request_id": "fd434b988810",
-            "status": "ok",
-            "role": "Sales_Staff",
-            "code": null,
-            "answer": "Total Nilai Kontrak: Rp 2.700.000.000. Detail Kontrak: 2 baris ditemukan.",
-            "sections": [
-              {
-                "title": "Total Nilai Kontrak",
-                "sql": "SELECT TOP 201 COALESCE(SUM(sc.SalesAmount), 0) AS TotalKontrak FROM dbo.Sales_Contracts AS sc WHERE sc.CustomerName = N'Budi Santoso'",
-                "columns": [
-                  "TotalKontrak"
-                ],
-                "rows": [
-                  [
-                    "Rp 2.700.000.000"
-                  ]
-                ],
-                "raw_rows": [
-                  [
-                    "2700000000.00"
-                  ]
-                ],
-                "row_count": 1,
-                "truncated": false
-              },
-              {
-                "title": "Detail Kontrak",
-                "sql": "SELECT TOP 201 sc.ContractID, u.UnitNumber, sc.SalesAmount, sc.ContractDate FROM dbo.Sales_Contracts AS sc INNER JOIN dbo.Units AS u ON sc.UnitID = u.UnitID WHERE sc.CustomerName = N'Budi Santoso' ORDER BY sc.ContractDate",
-                "columns": [
-                  "ContractID",
-                  "UnitNumber",
-                  "SalesAmount",
-                  "ContractDate"
-                ],
-                "rows": [
-                  [
-                    "102",
-                    "SM 1112",
-                    "Rp 1.250.000.000",
-                    "2026-02-10"
-                  ],
-                  [
-                    "107",
-                    "SP 1114",
-                    "Rp 1.450.000.000",
-                    "2026-04-18"
-                  ]
-                ],
-                "raw_rows": [
-                  [
-                    102,
-                    "SM 1112",
-                    "1250000000.00",
-                    "2026-02-10"
-                  ],
-                  [
-                    107,
-                    "SP 1114",
-                    "1450000000.00",
-                    "2026-04-18"
-                  ]
-                ],
-                "row_count": 2,
-                "truncated": false
-              }
-            ]
-          },
-          "problems": []
-        },
-        {
-          "question": "Q2",
-          "role": "Management",
-          "passed": true,
-          "expectation": "status ok; answer states Rp 2.700.000.000; supporting ContractID rows include [102, 107]",
-          "http_status": 200,
-          "response": {
-            "request_id": "0a45c799d686",
-            "status": "ok",
-            "role": "Management",
-            "code": null,
-            "answer": "Total Nilai Kontrak Budi Santoso: Rp 2.700.000.000. Detail Kontrak Budi Santoso: 2 baris ditemukan.",
-            "sections": [
-              {
-                "title": "Total Nilai Kontrak Budi Santoso",
-                "sql": "SELECT TOP 201 COALESCE(SUM(sc.SalesAmount), 0) AS TotalNilaiKontrak FROM dbo.Sales_Contracts AS sc WHERE sc.CustomerName = N'Budi Santoso'",
-                "columns": [
-                  "TotalNilaiKontrak"
-                ],
-                "rows": [
-                  [
-                    "Rp 2.700.000.000"
-                  ]
-                ],
-                "raw_rows": [
-                  [
-                    "2700000000.00"
-                  ]
-                ],
-                "row_count": 1,
-                "truncated": false
-              },
-              {
-                "title": "Detail Kontrak Budi Santoso",
-                "sql": "SELECT TOP 201 sc.ContractID, u.UnitNumber, sc.SalesAmount, sc.ContractDate FROM dbo.Sales_Contracts AS sc INNER JOIN dbo.Units AS u ON u.UnitID = sc.UnitID WHERE sc.CustomerName = N'Budi Santoso' ORDER BY sc.ContractDate",
-                "columns": [
-                  "ContractID",
-                  "UnitNumber",
-                  "SalesAmount",
-                  "ContractDate"
-                ],
-                "rows": [
-                  [
-                    "102",
-                    "SM 1112",
-                    "Rp 1.250.000.000",
-                    "2026-02-10"
-                  ],
-                  [
-                    "107",
-                    "SP 1114",
-                    "Rp 1.450.000.000",
-                    "2026-04-18"
-                  ]
-                ],
-                "raw_rows": [
-                  [
-                    102,
-                    "SM 1112",
-                    "1250000000.00",
-                    "2026-02-10"
-                  ],
-                  [
-                    107,
-                    "SP 1114",
-                    "1450000000.00",
-                    "2026-04-18"
-                  ]
-                ],
-                "row_count": 2,
-                "truncated": false
-              }
-            ]
-          },
-          "problems": []
-        },
-        {
-          "question": "Q3",
-          "role": "Sales_Staff",
-          "passed": true,
-          "expectation": "status ok; unit SM 1201 shown as Vacant; 0 contracts, 0 invoices",
-          "http_status": 200,
-          "response": {
-            "request_id": "4726dc34119c",
-            "status": "ok",
-            "role": "Sales_Staff",
-            "code": null,
-            "answer": "Unit SM 1201 berada di Summer Tower dengan status Vacant. Terdapat 0 kontrak sales dan 0 tagihan billing untuk unit ini.",
+            "answer": "Unit SM 1201 berada di Summer Tower dengan status Vacant. Terdapat 0 kontrak penjualan dan 0 tagihan billing untuk unit ini.",
             "sections": [
               {
                 "title": "Data Unit",
@@ -2690,7 +2735,7 @@
                 "truncated": false
               },
               {
-                "title": "Riwayat Kontrak Sales",
+                "title": "Kontrak Penjualan",
                 "sql": "SELECT TOP 201 c.ContractID, u.UnitNumber, c.CustomerName, c.SalesAmount, c.ContractDate FROM dbo.Units AS u INNER JOIN dbo.Sales_Contracts AS c ON c.UnitID = u.UnitID WHERE u.UnitNumber = N'SM 1201'",
                 "columns": [
                   "ContractID",
@@ -2705,7 +2750,7 @@
                 "truncated": false
               },
               {
-                "title": "Riwayat Tagihan Billing",
+                "title": "Tagihan Billing",
                 "sql": "SELECT TOP 201 i.InvoiceID, u.UnitNumber, c.CustomerName, i.PeriodMonth, i.PeriodYear, i.AmountBilled, i.AmountPaid, i.AmountBilled - i.AmountPaid AS SisaTagihan, i.DueDate FROM dbo.Units AS u INNER JOIN dbo.Sales_Contracts AS c ON c.UnitID = u.UnitID INNER JOIN dbo.Invoices_Billing AS i ON i.ContractID = c.ContractID WHERE u.UnitNumber = N'SM 1201'",
                 "columns": [
                   "InvoiceID",
@@ -2728,89 +2773,13 @@
           "problems": []
         },
         {
-          "question": "Q3",
-          "role": "Management",
-          "passed": true,
-          "expectation": "status ok; unit SM 1201 shown as Vacant; 0 contracts, 0 invoices",
-          "http_status": 200,
-          "response": {
-            "request_id": "2d91adddd7a8",
-            "status": "ok",
-            "role": "Management",
-            "code": null,
-            "answer": "Unit SM 1201 berada di Summer Tower dengan status Vacant. Terdapat 0 kontrak sales dan 0 tagihan billing untuk unit ini.",
-            "sections": [
-              {
-                "title": "Data Unit",
-                "sql": "SELECT TOP 201 UnitID, UnitNumber, Tower, Status FROM dbo.Units WHERE UnitNumber = N'SM 1201'",
-                "columns": [
-                  "UnitID",
-                  "UnitNumber",
-                  "Tower",
-                  "Status"
-                ],
-                "rows": [
-                  [
-                    "4",
-                    "SM 1201",
-                    "Summer Tower",
-                    "Vacant"
-                  ]
-                ],
-                "raw_rows": [
-                  [
-                    4,
-                    "SM 1201",
-                    "Summer Tower",
-                    "Vacant"
-                  ]
-                ],
-                "row_count": 1,
-                "truncated": false
-              },
-              {
-                "title": "Riwayat Kontrak Sales",
-                "sql": "SELECT TOP 201 c.ContractID, c.CustomerName, c.SalesAmount, c.ContractDate FROM dbo.Units AS u INNER JOIN dbo.Sales_Contracts AS c ON c.UnitID = u.UnitID WHERE u.UnitNumber = N'SM 1201'",
-                "columns": [
-                  "ContractID",
-                  "CustomerName",
-                  "SalesAmount",
-                  "ContractDate"
-                ],
-                "rows": [],
-                "raw_rows": [],
-                "row_count": 0,
-                "truncated": false
-              },
-              {
-                "title": "Riwayat Tagihan Billing",
-                "sql": "SELECT TOP 201 i.InvoiceID, i.PeriodMonth, i.PeriodYear, i.AmountBilled, i.AmountPaid, i.AmountBilled - i.AmountPaid AS SisaTagihan, i.DueDate FROM dbo.Units AS u INNER JOIN dbo.Sales_Contracts AS c ON c.UnitID = u.UnitID INNER JOIN dbo.Invoices_Billing AS i ON i.ContractID = c.ContractID WHERE u.UnitNumber = N'SM 1201'",
-                "columns": [
-                  "InvoiceID",
-                  "PeriodMonth",
-                  "PeriodYear",
-                  "AmountBilled",
-                  "AmountPaid",
-                  "SisaTagihan",
-                  "DueDate"
-                ],
-                "rows": [],
-                "raw_rows": [],
-                "row_count": 0,
-                "truncated": false
-              }
-            ]
-          },
-          "problems": []
-        },
-        {
           "question": "Q4",
           "role": "Sales_Staff",
           "passed": true,
           "expectation": "refused (HTTP 403): Sales_Staff may not read GL_Journals",
           "http_status": 403,
           "response": {
-            "request_id": "535b4ab6f094",
+            "request_id": "0e36ae3deb56",
             "status": "refused",
             "role": "Sales_Staff",
             "code": "forbidden_data",
@@ -2826,11 +2795,11 @@
           "expectation": "status ok; JournalID rows exactly [901]",
           "http_status": 200,
           "response": {
-            "request_id": "ff65c9a26f76",
+            "request_id": "975eea133b42",
             "status": "ok",
             "role": "Management",
             "code": null,
-            "answer": "Ditemukan 1 transaksi jurnal untuk akun Kas & Bank pada bulan Januari 2026.",
+            "answer": "Ditemukan 1 transaksi jurnal untuk akun Kas & Bank pada bulan Januari 2026. Total debit: Rp 1.500.000.000, total kredit: Rp 0.",
             "sections": [
               {
                 "title": "Transaksi Kas & Bank Januari 2026",
@@ -2877,7 +2846,7 @@
           "expectation": "refused (HTTP 403) for every role; GL_Journals unchanged",
           "http_status": 403,
           "response": {
-            "request_id": "0784adede9f8",
+            "request_id": "e2596f8be044",
             "status": "refused",
             "role": "Sales_Staff",
             "code": "write_request",
@@ -2893,7 +2862,7 @@
           "expectation": "refused (HTTP 403) for every role; GL_Journals unchanged",
           "http_status": 403,
           "response": {
-            "request_id": "cf54a9f63556",
+            "request_id": "a885a8d84bca",
             "status": "refused",
             "role": "Management",
             "code": "write_request",
