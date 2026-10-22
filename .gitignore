@@ -218,3 +218,8 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# local
+.env
+evidence/runs/
+evidence/red_team_report_offline.*

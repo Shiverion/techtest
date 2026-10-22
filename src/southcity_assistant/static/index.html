@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SouthCity Data Assistant</title>
+  <link rel="stylesheet" href="/ui/app.css">
+  <script src="/ui/app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">SC</div>
+      <div>
+        <h1>SouthCity Data Assistant</h1>
+        <p class="sub">Tanya data ERP dalam bahasa sehari-hari · read-only · akses sesuai peran</p>
+      </div>
+    </div>
+    <div class="role" role="radiogroup" aria-label="Peran pengguna">
+      <span class="role-label">Peran</span>
+      <button type="button" class="seg" role="radio" data-role="Sales_Staff" aria-checked="true">Sales_Staff</button>
+      <button type="button" class="seg" role="radio" data-role="Management" aria-checked="false">Management</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="side" aria-label="Contoh pertanyaan">
+      <section>
+        <h2>Pertanyaan tes manajemen</h2>
+        <div id="test-questions" class="chips"></div>
+      </section>
+      <section>
+        <h2>Uji keamanan</h2>
+        <div id="attack-questions" class="chips"></div>
+      </section>
+      <section class="legend">
+        <h2>Lapisan perlindungan</h2>
+        <ol>
+          <li><b>Input guard</b> menolak perintah ubah/hapus data</li>
+          <li><b>RBAC</b> membatasi tabel per peran</li>
+          <li><b>SQL policy</b> hanya mengizinkan SELECT yang aman</li>
+          <li><b>Database</b> login per peran tanpa hak tulis</li>
+        </ol>
+      </section>
+    </aside>
+
+    <main class="chat">
+      <div id="thread" class="thread" aria-live="polite">
+        <div id="empty" class="empty">
+          <h2>Mulai dengan salah satu pertanyaan di kiri</h2>
+          <p>Jawaban berisi angka dalam Rupiah, tabel pendukung, dan SQL yang dijalankan.
+            Ganti peran di kanan atas untuk melihat perbedaan akses Sales_Staff dan Management.</p>
+        </div>
+      </div>
+      <form id="composer" class="composer" autocomplete="off">
+        <textarea id="question" rows="1" maxlength="2000" placeholder="Tulis pertanyaan… (Enter untuk kirim)" aria-label="Pertanyaan"></textarea>
+        <button id="send" type="submit">Kirim</button>
+      </form>
+      <div class="footer-row">
+        <button id="reset" type="button" class="link">Bersihkan percakapan</button>
+        <a href="/docs" class="link">API docs</a>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

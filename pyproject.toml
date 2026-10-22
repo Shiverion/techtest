@@ -1,0 +1,37 @@
+[project]
+name = "southcity-assistant"
+version = "1.0.0"
+description = "Secure Text-to-SQL assistant for the SouthCity property ERP (MS SQL Server)"
+readme = "README.md"
+requires-python = ">=3.12,<3.14"
+dependencies = [
+    "fastapi==0.118.0",
+    "uvicorn==0.37.0",
+    "pydantic==2.11.9",
+    "pydantic-settings==2.11.0",
+    "sqlglot==30.24.0",
+    "pymssql==2.4.5",
+    "openai==1.109.1",
+]
+
+[dependency-groups]
+dev = [
+    "pytest==8.4.2",
+    "httpx==0.28.1",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/southcity_assistant"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "integration: needs the Docker SQL Server (docker compose up -d db && docker compose run --rm db-init)",
+    "live: calls the real LLM; opt-in with --live",
+]
+addopts = "-ra"
+filterwarnings = ["ignore:The anyio.abc.BlockingPortal alias is deprecated:DeprecationWarning"]
