@@ -136,8 +136,11 @@ like all integration tests it needs the SQL Server container and otherwise skips
    only those views in the role's schema.
 6. **Filters on CTE-renamed columns** are not existence-checked (an unknown name gives an empty result).
 7. **Single-process limits** (rate limit, concurrency, budget) and **local TLS** (self-signed certificate on
-   localhost).
-8. **Provider data handling.** Questions, the role's schema and matched entity names go to the LLM provider;
+   localhost). On the Vercel demo the limits apply per function instance, not globally.
+8. **Public demo database firewall.** Vercel functions have no fixed outbound IP, so the Azure SQL firewall
+   accepts any address. The database is reachable only with the per-role passwords over TLS, and those users can
+   only read the fixture; a production deployment would use private networking or a fixed egress IP.
+9. **Provider data handling.** Questions, the role's schema and matched entity names go to the LLM provider;
    check the provider's retention terms before using real customer data.
 
 ## 7. Before production

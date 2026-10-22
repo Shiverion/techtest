@@ -8,11 +8,15 @@ enforces role-based access (`Sales_Staff`, `Management`) and read-only access in
 Submission for the SouthCity AI Engineer technical test. The original brief is kept in
 [`docs/ASSIGNMENT.md`](docs/ASSIGNMENT.md); `schema.sql` is the unmodified fixture.
 
+> **Try it live: https://tanyadata.vercel.app** — pick `Sales_Staff` or `Management` at the top right and click
+> any of the five test questions. The database is the unmodified fixture on Azure SQL Database (free tier, it
+> pauses when idle: the first question after a quiet period can take up to a minute while it wakes up).
+
 | | |
 |---|---|
 | Stack | Python 3.12, FastAPI, sqlglot (T-SQL AST policy), pymssql, OpenAI-compatible LLM client (tested with Moonshot **Kimi k2.6**), SQL Server 2022 in Docker |
-| Tests | **294 automated tests** (unit + integration against a real SQL Server), plus an opt-in live suite with the real model |
-| Demo UI | Chat page served by the API at http://127.0.0.1:8000: role switch, the five test questions and attack examples as one-click prompts, answers with KPI tiles, Rupiah tables, CSV export and the executed SQL |
+| Tests | **299 automated tests** (unit + integration against a real SQL Server), plus an opt-in live suite with the real model |
+| Demo UI | Chat page served by the API (live at https://tanyadata.vercel.app, locally at http://127.0.0.1:8000): live step-by-step progress of the pipeline, role switch, the five test questions and attack examples as one-click prompts, answers with KPI tiles, Rupiah tables, CSV export and the executed SQL |
 | Live result | **50/50**: Q1–Q5 × both roles × 5 runs against Kimi k2.6 and the real database ([`evidence/eval_report.md`](evidence/eval_report.md)) |
 | Red team | **34 attacks/controls passed, 0 failed, 2 documented gaps**, data and schema unchanged ([`evidence/red_team_report.md`](evidence/red_team_report.md), analysis in [`docs/SECURITY.md`](docs/SECURITY.md)) |
 
@@ -215,10 +219,39 @@ Actual response from the live evaluation (Kimi k2.6):
 }
 ```
 
+`POST /api/v1/ask/stream` runs the same pipeline and returns Server-Sent Events: a `stage` event as each step
+starts, a `sql` event when a query has passed the SQL policy (before it runs), and a final `result` with the same
+response body. The chat UI uses it to show progress live.
+
 `status` is `ok`, `refused` or `error`; `code` gives a stable reason (`forbidden_data`, `write_request`,
 `forbidden_table`, `not_select`, `not_found`, `ambiguous`, `clarify`, `query_timeout`, …). HTTP status: 200 ok,
 403 refused, 400/401 role or key problems, 429 rate limited, 503/504 dependency unavailable or timed out.
 `raw_rows` keeps exact decimals as strings; `rows` is the display form.
+
+## Live deployment
+
+The public demo runs the same code with two cloud services instead of Docker:
+
+| Piece | Where | Notes |
+|---|---|---|
+| API + chat UI | Vercel, Python function in `sin1` (Singapore) | `api/index.py` wraps the same FastAPI app; `vercel.json` routes every path to it |
+| Database | Azure SQL Database, free offer, serverless, Southeast Asia | Loaded from the unmodified `schema.sql`; set to **pause at the monthly free limit** instead of billing |
+| Model | Moonshot Kimi k2.6 | Same OpenAI-compatible client |
+
+The database security is the same as locally, as *contained* database users (`sql/azure/security.sql`):
+`southcity_sales` cannot read `GL_Journals`, neither runtime user can write or change schema, and the app never
+uses the admin login. Connections are encrypted (TLS 1.2+). The full integration suite (88 tests) passes against
+the Azure database, and the Q1–Q5 evaluation passes 10/10 against the live URL.
+
+Two things differ from a local run, both deliberate:
+- Vercel functions have no fixed outbound IP, so the Azure firewall accepts any address; access is protected by
+  the per-role passwords, encryption and the read-only grants.
+- Rate limiting (10 questions per minute per visitor) is per function instance, and the free database
+  auto-pauses after an hour idle; `DB_CONNECT_RETRY_S` makes the first request wait for it to resume.
+
+To deploy your own copy: `az login`, fill `.env.azure` from `.env.azure.example`, run
+`bash scripts/provision_azure.sh`, then add the same variables as `.env` (with `DB_HOST` set to the Azure server,
+`TRUST_PROXY=true`, `DB_CONNECT_RETRY_S=75`) as Vercel environment variables and run `vercel deploy --prod`.
 
 ## Tests
 
@@ -226,7 +259,7 @@ Actual response from the live evaluation (Kimi k2.6):
 uv run pytest
 ```
 
-Runs 294 tests: unit tests (policy, guard, roles, rendering, model-output contract) and integration tests against
+Runs 299 tests: unit tests (policy, guard, roles, rendering, model-output contract) and integration tests against
 the Docker SQL Server (permissions with the real logins, all five questions for both roles through the full
 pipeline, repair, timeouts, truncation, API behaviour). Integration tests skip with a message if the database is
 not up. In these tests a scripted planner stands in for the model; **all SQL still executes on SQL Server**.
@@ -315,6 +348,9 @@ src/southcity_assistant/
 tests/unit, tests/integration, tests/live
 scripts/run_eval.py            live evaluation -> evidence/
 scripts/red_team.py           attack catalog -> evidence/red_team_report.md
+scripts/provision_azure.sh    Azure SQL Database (free offer) for the live demo
+api/index.py, vercel.json     Vercel entry point and routing
+sql/azure/security.sql        least-privilege users as contained database users (Azure)
 docs/                          original assignment, SECURITY.md (threat model and security analysis),
                                screenshots/ (evidence for Q1-Q5)
 ```
