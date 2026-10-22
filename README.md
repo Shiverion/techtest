@@ -13,6 +13,8 @@ Submission for the SouthCity AI Engineer technical test. The original brief is k
 | Live demo (Vercel) | **https://tanyadata.vercel.app** |
 | API documentation (live) | https://tanyadata.vercel.app/docs |
 | Source code (GitHub) | https://github.com/Shiverion/techtest |
+| System design (diagrams) | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) |
+| Security analysis | [`docs/SECURITY.md`](docs/SECURITY.md) |
 
 > **Try it live: https://tanyadata.vercel.app** — pick `Sales_Staff` or `Management` at the top right and click
 > any of the five test questions. The database is the unmodified fixture on Azure SQL Database (free tier, it
@@ -76,6 +78,10 @@ same results for `Management`.
 ![Q5 as Management](docs/screenshots/q5-management.png)
 
 ## Architecture
+
+The overview below shows one request's path. The full system design (deployment, components, a sequence diagram
+of a request, where each refusal happens, data model and access per role, and where secrets live) is in
+[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
 ```mermaid
 flowchart LR
@@ -357,6 +363,6 @@ scripts/red_team.py           attack catalog -> evidence/red_team_report.md
 scripts/provision_azure.sh    Azure SQL Database (free offer) for the live demo
 api/index.py, vercel.json     Vercel entry point and routing
 sql/azure/security.sql        least-privilege users as contained database users (Azure)
-docs/                          original assignment, SECURITY.md (threat model and security analysis),
+docs/                          original assignment, ARCHITECTURE.md (system design), SECURITY.md (threat model),
                                screenshots/ (evidence for Q1-Q5)
 ```
