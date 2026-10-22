@@ -25,9 +25,9 @@ Submission for the SouthCity AI Engineer technical test. The original brief is k
 | | |
 |---|---|
 | Stack | Python 3.12, FastAPI, sqlglot (T-SQL AST policy), pymssql, OpenAI-compatible LLM client (tested with Moonshot **Kimi k2.6**), SQL Server 2022 in Docker |
-| Tests | **299 automated tests** (unit + integration against a real SQL Server), plus an opt-in live suite with the real model |
+| Tests | **300 tests**: 299 run offline and pass (unit + integration against a real SQL Server); 1 live test with the real model runs only with `--live` |
 | Demo UI | Chat page served by the API (live at https://tanyadata.vercel.app, locally at http://127.0.0.1:8000): live step-by-step progress of the pipeline, role switch, the five test questions and attack examples as one-click prompts, answers with KPI tiles, Rupiah tables, CSV export and the executed SQL |
-| Live result | **50/50**: Q1–Q5 × both roles × 5 runs against Kimi k2.6 and the real database ([`evidence/eval_report.md`](evidence/eval_report.md)) |
+| Live result | **50/50**: Q1–Q5 × both roles × 5 runs on the final code with Kimi k2.6 and SQL Server ([`evidence/eval_report.md`](evidence/eval_report.md)); **10/10** against the deployed demo ([`evidence/live/eval_report.md`](evidence/live/eval_report.md)). Each report states the commit it ran on |
 | Red team | **34 attacks/controls passed, 0 failed, 2 documented gaps**, data and schema unchanged ([`evidence/red_team_report.md`](evidence/red_team_report.md), analysis in [`docs/SECURITY.md`](docs/SECURITY.md)) |
 
 ## Results for the five test questions
@@ -48,20 +48,32 @@ every response, the generated SQL and the supporting tables for all 50 cases.
 ## Evidence: questions 1–5 in the chat UI
 
 Screenshots of the chat UI answering the five test questions against the real model (Kimi k2.6) and the
-Docker SQL Server. Each answer shows the figure, the supporting table, and the SQL that ran. Q1–Q3 return the
-same results for `Management`.
+Docker SQL Server. Every question is shown for both roles; each answer shows the figure, the supporting table, and
+the SQL that ran.
 
 **Q1 · Sales_Staff: sisa tunggakan Siti Rahmawati, periode 10/2026 → Rp 10.500.000**
 
 ![Q1 as Sales_Staff](docs/screenshots/q1-sales.png)
 
+**Q1 · Management: same question → Rp 10.500.000**
+
+![Q1 as Management](docs/screenshots/q1-management.png)
+
 **Q2 · Sales_Staff: total nilai kontrak Budi Santoso → Rp 2.700.000.000**
 
 ![Q2 as Sales_Staff](docs/screenshots/q2-sales.png)
 
+**Q2 · Management: same question → Rp 2.700.000.000**
+
+![Q2 as Management](docs/screenshots/q2-management.png)
+
 **Q3 · Sales_Staff: riwayat unit SM 1201 → Vacant, no contracts, no invoices**
 
 ![Q3 as Sales_Staff](docs/screenshots/q3-sales.png)
+
+**Q3 · Management: same question → Vacant, no contracts, no invoices**
+
+![Q3 as Management](docs/screenshots/q3-management.png)
 
 **Q4 · Sales_Staff: jurnal Kas & Bank → refused (HTTP 403, GL_Journals is Management-only)**
 
@@ -273,7 +285,7 @@ To deploy your own copy: `az login`, fill `.env.azure` from `.env.azure.example`
 uv run pytest
 ```
 
-Runs 299 tests: unit tests (policy, guard, roles, rendering, model-output contract) and integration tests against
+Collects 300 tests; 299 run offline (the live test is skipped unless `--live`): unit tests (policy, guard, roles, rendering, model-output contract) and integration tests against
 the Docker SQL Server (permissions with the real logins, all five questions for both roles through the full
 pipeline, repair, timeouts, truncation, API behaviour). Integration tests skip with a message if the database is
 not up. In these tests a scripted planner stands in for the model; **all SQL still executes on SQL Server**.
