@@ -1,0 +1,13 @@
+.venv
+.env
+.env.*
+tests
+evidence
+docs
+scripts
+sql
+schema.sql
+Dockerfile
+compose.yaml
+uv.lock
+.env.local

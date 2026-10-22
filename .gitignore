@@ -225,3 +225,6 @@ evidence/runs/
 evidence/red_team_report_offline.*
 .env.azure
 .vercel
+
+.vercel
+.env*.local
