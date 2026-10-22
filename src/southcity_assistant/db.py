@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 import re
+import time
 from contextlib import contextmanager
 from dataclasses import dataclass
 from typing import Any, Iterator
@@ -52,20 +53,27 @@ class Database:
     @contextmanager
     def connection(self, role: Role) -> Iterator[pymssql.Connection]:
         user, password = self.settings.db_credentials(role)
-        try:
-            conn = pymssql.connect(
-                server=self.settings.db_host,
-                port=self.settings.db_port,
-                user=user,
-                password=password,
-                database=self.settings.db_name,
-                login_timeout=self.settings.db_login_timeout_s,
-                timeout=self.settings.db_query_timeout_s,
-                autocommit=False,
-                appname="southcity-assistant",
-            )
-        except pymssql.Error:
-            raise QueryError("database", None, "Database is unavailable.") from None
+        # A serverless database that auto-paused refuses logins for up to a minute while it resumes;
+        # with DB_CONNECT_RETRY_S > 0 the first request after idle waits for it instead of failing.
+        give_up = time.monotonic() + self.settings.db_connect_retry_s
+        while True:
+            try:
+                conn = pymssql.connect(
+                    server=self.settings.db_host,
+                    port=self.settings.db_port,
+                    user=user,
+                    password=password,
+                    database=self.settings.db_name,
+                    login_timeout=self.settings.db_login_timeout_s,
+                    timeout=self.settings.db_query_timeout_s,
+                    autocommit=False,
+                    appname="southcity-assistant",
+                )
+                break
+            except pymssql.Error:
+                if time.monotonic() + 5 > give_up:
+                    raise QueryError("database", None, "Database is unavailable.") from None
+                time.sleep(5)
         try:
             yield conn
         finally:

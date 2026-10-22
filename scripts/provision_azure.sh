@@ -11,7 +11,7 @@
 # sqlcmd runs from the SQL Server container image, so nothing else needs installing.
 set -euo pipefail
 cd "$(dirname "$0")/.."
-set -a; . ./.env.azure; . ./.env; set +a
+set -a; . ./.env.azure; set +a  # admin + runtime-user passwords for Azure (gitignored)
 
 SQLCMD_IMAGE=mcr.microsoft.com/mssql/server:2022-latest
 FQDN="$AZ_SQL_SERVER.database.windows.net"
@@ -29,7 +29,7 @@ if ! az sql db show -g "$AZ_RG" -s "$AZ_SQL_SERVER" -n "$AZ_SQL_DB" -o none 2>/d
   echo "[azure] free-offer database $AZ_SQL_DB (auto-pauses when the free allowance is used)"
   az sql db create -g "$AZ_RG" -s "$AZ_SQL_SERVER" -n "$AZ_SQL_DB" \
     --edition GeneralPurpose --family Gen5 --capacity 2 --compute-model Serverless \
-    --use-free-limit true --free-limit-exhaustion-behavior AutoPause -o none
+    --use-free-limit true --free-limit-exhaustion-behavior AutoPause --backup-storage-redundancy Local -o none
 fi
 
 MY_IP=$(curl -s https://api.ipify.org)
@@ -38,7 +38,7 @@ az sql server firewall-rule create -g "$AZ_RG" -s "$AZ_SQL_SERVER" -n provisioni
   --start-ip-address "$MY_IP" --end-ip-address "$MY_IP" -o none
 
 sqlcmd() {
-  docker run --rm -i -v "$PWD:/work:ro" "$SQLCMD_IMAGE" /opt/mssql-tools18/bin/sqlcmd \
+  docker run --rm -i -v "$(pwd -W 2>/dev/null || pwd):/work:ro" "$SQLCMD_IMAGE" /opt/mssql-tools18/bin/sqlcmd \
     -S "$FQDN" -d "$AZ_SQL_DB" -U "$AZ_SQL_ADMIN" -P "$AZ_SQL_ADMIN_PASSWORD" -N -b -I -l 60 "$@"
 }
 

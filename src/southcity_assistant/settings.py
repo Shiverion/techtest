@@ -24,6 +24,7 @@ class Settings(BaseSettings):
     mgmt_db_password: SecretStr
     db_query_timeout_s: int = Field(5, ge=1, le=60)
     db_login_timeout_s: int = Field(5, ge=1, le=60)
+    db_connect_retry_s: int = Field(0, ge=0, le=90)  # keep retrying a paused (serverless) database this long
 
     llm_api_key: SecretStr = SecretStr("")
     llm_base_url: str = "https://api.moonshot.ai/v1"
