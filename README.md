@@ -8,6 +8,12 @@ enforces role-based access (`Sales_Staff`, `Management`) and read-only access in
 Submission for the SouthCity AI Engineer technical test. The original brief is kept in
 [`docs/ASSIGNMENT.md`](docs/ASSIGNMENT.md); `schema.sql` is the unmodified fixture.
 
+| Link | |
+|---|---|
+| Live demo (Vercel) | **https://tanyadata.vercel.app** |
+| API documentation (live) | https://tanyadata.vercel.app/docs |
+| Source code (GitHub) | https://github.com/Shiverion/techtest |
+
 > **Try it live: https://tanyadata.vercel.app** — pick `Sales_Staff` or `Management` at the top right and click
 > any of the five test questions. The database is the unmodified fixture on Azure SQL Database (free tier, it
 > pauses when idle: the first question after a quiet period can take up to a minute while it wakes up).

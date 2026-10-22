@@ -24,7 +24,7 @@ services:
       db:
         condition: service_healthy
     environment:
-      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD}
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD:?set MSSQL_SA_PASSWORD in .env}
       DB_NAME: ${DB_NAME:-SouthCity}
       SALES_DB_PASSWORD: ${SALES_DB_PASSWORD:?set SALES_DB_PASSWORD in .env}
       MGMT_DB_PASSWORD: ${MGMT_DB_PASSWORD:?set MGMT_DB_PASSWORD in .env}
