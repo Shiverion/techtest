@@ -7,7 +7,7 @@ for SQL Server syntax/name errors; policy rejections, permission errors and time
 from __future__ import annotations
 
 import time
-from typing import Literal
+from typing import Any, Callable, Literal
 
 from .audit import audit, sql_fingerprint
 from .contracts import AskResponse, QueryPlan
@@ -31,16 +31,25 @@ class Stop(Exception):
         self.answer = answer
 
 
+# Progress callback for streaming clients: (event, data). Events: "stage" {"id"} when a step starts,
+# "sql" {"index", "title", "sql"} when a query has passed the SQL policy (before it runs).
+Progress = Callable[[str, dict[str, Any]], None]
+
+
+def _silent(event: str, data: dict[str, Any]) -> None:
+    return None
+
+
 class Assistant:
     def __init__(self, settings: Settings, db: Database, planner: Planner):
         self.settings = settings
         self.db = db
         self.planner = planner
 
-    def ask(self, question: str, role: Role, request_id: str) -> AskResponse:
+    def ask(self, question: str, role: Role, request_id: str, progress: Progress = _silent) -> AskResponse:
         started = time.monotonic()
         try:
-            response = self._answer(question, role, request_id)
+            response = self._answer(question, role, request_id, progress)
         except Stop as stop:
             response = AskResponse(
                 request_id=request_id, status=stop.status, role=role.value, code=stop.code, answer=stop.answer
@@ -57,14 +66,16 @@ class Assistant:
         )
         return response
 
-    def _answer(self, question: str, role: Role, request_id: str) -> AskResponse:
+    def _answer(self, question: str, role: Role, request_id: str, progress: Progress) -> AskResponse:
         deadline = time.monotonic() + self.settings.request_deadline_s  # per request, never shared
+        progress("stage", {"id": "guard"})
         guard = screen_question(question)
         if guard.injection_suspected:
             audit("injection_suspected", request_id=request_id, role=role.value)
         if not guard.allowed:
             raise Stop("refused", guard.code or "rejected", guard.message or "Permintaan ditolak.")
 
+        progress("stage", {"id": "scope"})
         area = restricted_topic(role, question)
         if area:
             raise Stop(
@@ -74,21 +85,28 @@ class Assistant:
                 "Data ini hanya tersedia untuk peran Management.",
             )
 
+        progress("stage", {"id": "entities"})
         try:
             hints = resolve(self.db, role, question, budget=lambda: _remaining(deadline))
         except QueryError as exc:
             raise Stop("error", "database_unavailable", exc.safe_message) from None
         if hints.missing_units:
             raise Stop("ok", "not_found", f"Unit {hints.missing_units[0]} tidak ditemukan di data Units.")
+        progress("stage", {"id": "planning"})
         plan = self._plan(question, role, hints, deadline)
 
         repair_used = False
         while True:
+            progress("stage", {"id": "policy"})
             queries = self._validate(plan, role, question)
+            for index, (title, vq) in enumerate(queries):
+                progress("sql", {"index": index, "title": title, "sql": vq.sql})
             try:
+                progress("stage", {"id": "checking"})
                 problem = check_filters(self.db, role, [vq for _, vq in queries], budget=lambda: _remaining(deadline))
                 if problem:
                     raise Stop("ok", problem.kind, problem.message)
+                progress("stage", {"id": "executing"})
                 results = []
                 for _, vq in queries:
                     _remaining(deadline)  # each query is bounded by DB_QUERY_TIMEOUT_S; check between them
@@ -103,6 +121,7 @@ class Assistant:
                     raise Stop("error", "query_failed", "Query tidak dapat dijalankan.") from None
                 repair_used = True
                 audit("repair", request_id=request_id, role=role.value, sql_error=exc.number)
+                progress("stage", {"id": "repair"})
                 plan = self._plan(question, role, hints, deadline, repair=_repair_message(exc))
 
         if time.monotonic() > deadline:  # never report success after the budget is spent

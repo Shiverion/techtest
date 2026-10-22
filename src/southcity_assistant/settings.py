@@ -40,6 +40,7 @@ class Settings(BaseSettings):
     max_concurrent_requests: int = Field(4, ge=1, le=64)
     rate_limit_per_minute: int = Field(30, ge=1)
     request_deadline_s: float = Field(120, ge=5, le=600)  # whole request: lookups, model calls, repair
+    trust_proxy: bool = False  # take the client address from X-Real-IP / X-Forwarded-For (e.g. on Vercel)
 
     @field_validator("api_keys", mode="before")
     @classmethod

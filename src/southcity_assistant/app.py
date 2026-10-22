@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import json
 import logging
+import queue
 import threading
 import time
 import uuid
@@ -11,14 +13,14 @@ from collections import defaultdict, deque
 from pathlib import Path
 
 from fastapi import FastAPI, Header, Request
-from fastapi.responses import JSONResponse, RedirectResponse
+from fastapi.responses import JSONResponse, RedirectResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 
 from .contracts import AskRequest, AskResponse
 from .db import Database
 from .llm import OpenAICompatiblePlanner, Planner
 from .pipeline import Assistant
-from .security.roles import RoleError, resolve_role
+from .security.roles import Role, RoleError, resolve_role
 from .settings import Settings, get_settings
 
 STATIC_DIR = Path(__file__).parent / "static"  # demo chat UI, served at /ui
@@ -97,6 +99,7 @@ def create_app(
             )
             response.headers["X-Content-Type-Options"] = "nosniff"
             response.headers["Referrer-Policy"] = "no-referrer"
+            response.headers["Cache-Control"] = "no-cache"  # revalidate, so a deploy is picked up at once
         return response
 
     @app.get("/", include_in_schema=False)
@@ -109,14 +112,21 @@ def create_app(
     def health() -> dict[str, str]:
         return {"status": "ok"}
 
-    @app.post("/api/v1/ask", response_model=AskResponse)
-    def ask(
-        body: AskRequest,
-        request: Request,
-        x_user_role: str | None = Header(default=None, description="Sales_Staff or Management"),
-        x_api_key: str | None = Header(default=None, description="Required when AUTH_MODE=api_key"),
-    ) -> JSONResponse:
-        request_id = uuid.uuid4().hex[:12]
+    def client_id(request: Request, x_api_key: str | None) -> str:
+        # Only an authenticated key identifies a client; in demo mode an arbitrary X-API-Key header
+        # must not buy a fresh rate-limit window. Behind a trusted proxy (Vercel) the client address
+        # comes from the proxy's header, not the socket.
+        if settings.auth_mode == "api_key":
+            return f"key:{x_api_key}"
+        host = request.client.host if request.client else "unknown"
+        if settings.trust_proxy:
+            forwarded = request.headers.get("x-real-ip") or request.headers.get("x-forwarded-for", "")
+            host = forwarded.split(",")[0].strip() or host
+        return f"ip:{host}"
+
+    def admit(body: AskRequest, request: Request, x_user_role: str | None, x_api_key: str | None,
+              request_id: str) -> tuple[Role | None, JSONResponse | None]:
+        """Role, rate limit and a concurrency slot. On success the caller owns the slot and must release it."""
 
         def reply(status: int, payload: AskResponse) -> JSONResponse:
             return JSONResponse(status_code=status, content=payload.model_dump(),
@@ -131,25 +141,76 @@ def create_app(
                 api_keys=settings.api_keys,
             )
         except RoleError as exc:
-            return reply(exc.status, AskResponse(request_id=request_id, status="refused",
-                                                 code=exc.code, answer=exc.message))
-
-        # Only an authenticated key identifies a client; in demo mode an arbitrary X-API-Key header
-        # must not buy a fresh rate-limit window.
-        client = (f"key:{x_api_key}" if settings.auth_mode == "api_key"
-                  else f"ip:{request.client.host if request.client else 'unknown'}")
-        if not limiter.allow(client):
-            return reply(429, AskResponse(request_id=request_id, status="refused", role=role.value,
-                                          code="rate_limited", answer="Terlalu banyak permintaan."))
+            return None, reply(exc.status, AskResponse(request_id=request_id, status="refused",
+                                                       code=exc.code, answer=exc.message))
+        if not limiter.allow(client_id(request, x_api_key)):
+            return None, reply(429, AskResponse(request_id=request_id, status="refused", role=role.value,
+                                                code="rate_limited", answer="Terlalu banyak permintaan."))
         if not slots.acquire(blocking=False):
-            return reply(503, AskResponse(request_id=request_id, status="error", role=role.value,
-                                          code="busy", answer="Server sedang sibuk, coba lagi."))
+            return None, reply(503, AskResponse(request_id=request_id, status="error", role=role.value,
+                                                code="busy", answer="Server sedang sibuk, coba lagi."))
+        return role, None
+
+    def http_status(response: AskResponse) -> int:
+        return HTTP_STATUS.get(response.code or "", HTTP_STATUS.get(response.status, 502))
+
+    @app.post("/api/v1/ask", response_model=AskResponse)
+    def ask(
+        body: AskRequest,
+        request: Request,
+        x_user_role: str | None = Header(default=None, description="Sales_Staff or Management"),
+        x_api_key: str | None = Header(default=None, description="Required when AUTH_MODE=api_key"),
+    ) -> JSONResponse:
+        request_id = uuid.uuid4().hex[:12]
+        role, rejected = admit(body, request, x_user_role, x_api_key, request_id)
+        if rejected:
+            return rejected
         try:
             response = assistant.ask(body.question, role, request_id)
         finally:
             slots.release()
-        status = HTTP_STATUS.get(response.code or "", HTTP_STATUS.get(response.status, 502))
-        return reply(status, response)
+        return JSONResponse(status_code=http_status(response), content=response.model_dump(),
+                            headers={"X-Request-ID": request_id})
+
+    @app.post("/api/v1/ask/stream")
+    def ask_stream(
+        body: AskRequest,
+        request: Request,
+        x_user_role: str | None = Header(default=None, description="Sales_Staff or Management"),
+        x_api_key: str | None = Header(default=None, description="Required when AUTH_MODE=api_key"),
+    ):
+        """Same pipeline and checks as /api/v1/ask, as Server-Sent Events: `stage` when a step starts,
+        `sql` when a query has passed the SQL policy (before it runs), and a final `result` carrying the
+        AskResponse and the HTTP status /api/v1/ask would have used. Admission failures are plain JSON."""
+        request_id = uuid.uuid4().hex[:12]
+        role, rejected = admit(body, request, x_user_role, x_api_key, request_id)
+        if rejected:
+            return rejected
+        events: queue.Queue[tuple[str, dict] | None] = queue.Queue()
+
+        def work() -> None:
+            try:
+                response = assistant.ask(body.question, role, request_id,
+                                         progress=lambda event, data: events.put((event, data)))
+                events.put(("result", {"status": http_status(response), "response": response.model_dump()}))
+            except Exception:
+                logging.getLogger("southcity").exception("stream worker failed")
+                events.put(("result", {"status": 500, "response": {
+                    "request_id": request_id, "status": "error", "code": "internal_error",
+                    "answer": "Terjadi kesalahan internal.", "sections": []}}))
+            finally:
+                slots.release()
+                events.put(None)
+
+        threading.Thread(target=work, daemon=True).start()
+
+        def stream():
+            while (item := events.get()) is not None:
+                event, data = item
+                yield f"event: {event}\ndata: {json.dumps(data, ensure_ascii=False)}\n\n"
+
+        return StreamingResponse(stream(), media_type="text/event-stream", headers={
+            "X-Request-ID": request_id, "Cache-Control": "no-store", "X-Accel-Buffering": "no"})
 
     return app
 

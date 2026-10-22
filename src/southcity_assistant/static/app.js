@@ -169,8 +169,9 @@ function renderSection(section, index) {
   return box;
 }
 
-function renderAnswer(card, data, httpStatus, ms) {
+function renderAnswer(card, data, httpStatus, ms, steps) {
   card.replaceChildren();
+  if (steps) card.append(steps);
   const row = el("div", "status-row");
   const kind = data.status === "ok" && data.code ? "info" : data.status || "error";
   row.append(el("span", `pill ${kind}`, STATUS_LABEL[data.status] || "Gagal"));
@@ -182,8 +183,12 @@ function renderAnswer(card, data, httpStatus, ms) {
     row.append(note);
   }
   card.append(row);
-  card.append(el("p", "answer", data.answer || "Tidak ada jawaban."));
-  (data.sections || []).forEach((s, i) => card.append(renderSection(s, i)));
+  const answer = el("p", "answer");
+  card.append(answer);
+  const sections = el("div", "sections");
+  (data.sections || []).forEach((s, i) => sections.append(renderSection(s, i)));
+  card.append(sections);
+  typeText(answer, data.answer || "Tidak ada jawaban.", () => sections.classList.add("shown"));
 
   const meta = el("div", "meta");
   meta.append(el("span", null, `HTTP ${httpStatus}`));
@@ -192,6 +197,89 @@ function renderAnswer(card, data, httpStatus, ms) {
   meta.append(el("span", null, `${(ms / 1000).toFixed(1)} s`));
   if (data.request_id) meta.append(el("span", null, `request ${data.request_id}`));
   card.append(meta);
+}
+
+const STAGES = {
+  guard: "Memeriksa keamanan pertanyaan",
+  scope: "Memeriksa hak akses peran",
+  entities: "Mencocokkan nama & unit di database",
+  planning: "Model menyusun SQL",
+  policy: "Validasi SQL (SQL policy)",
+  checking: "Memeriksa data yang dirujuk",
+  executing: "Menjalankan query di SQL Server",
+  repair: "Memperbaiki SQL (1x)",
+};
+const REDUCED_MOTION = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+// Reveal the answer word by word. Purely visual: the full text has already arrived.
+function typeText(node, text, done) {
+  if (REDUCED_MOTION) {
+    node.textContent = text;
+    done();
+    return;
+  }
+  const words = text.split(/(\s+)/);
+  let i = 0;
+  const timer = setInterval(() => {
+    node.textContent += words.slice(i, i + 2).join("");
+    i += 2;
+    if (i >= words.length) {
+      clearInterval(timer);
+      done();
+    }
+  }, 28);
+}
+
+function stepTracker() {
+  const list = el("ol", "steps");
+  return {
+    node: list,
+    start(id) {
+      list.querySelector(".active")?.classList.replace("active", "done");
+      const item = el("li", "step active", STAGES[id] || id);
+      list.append(item);
+    },
+    finish(data) {
+      const last = list.querySelector(".active");
+      if (!last) return;
+      last.classList.remove("active");
+      if (data.status === "ok" && !data.code) last.classList.add("done");
+      else if (data.status === "ok") last.classList.add("info");
+      else last.classList.add("failed");
+    },
+  };
+}
+
+function sqlPreview(card, item) {
+  let box = card.querySelector(".sql-preview");
+  if (!box) {
+    box = el("div", "sql-preview");
+    box.append(el("div", "sql-head", "SQL lolos validasi, menjalankan…"));
+    card.append(box);
+  }
+  box.append(highlightSql(item.sql));
+}
+
+async function readEvents(response, onEvent) {
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+  for (;;) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    let cut;
+    while ((cut = buffer.indexOf("\n\n")) >= 0) {
+      const block = buffer.slice(0, cut);
+      buffer = buffer.slice(cut + 2);
+      const fields = {};
+      block.split("\n").forEach((line) => {
+        const at = line.indexOf(": ");
+        if (at > 0) fields[line.slice(0, at)] = line.slice(at + 2);
+      });
+      if (fields.event && fields.data) onEvent(fields.event, JSON.parse(fields.data));
+    }
+  }
 }
 
 async function ask(question) {
@@ -205,31 +293,54 @@ async function ask(question) {
   user.append(el("div", "who", state.role));
   user.append(el("div", "bubble", question));
   const card = el("div", "msg-bot");
-  const thinking = el("div", "thinking");
-  const dots = el("span", "dots");
-  dots.append(el("span"), el("span"), el("span"));
-  thinking.append(dots, el("span", null, "Menyusun dan menjalankan query…"));
-  card.append(thinking);
+  const steps = stepTracker();
+  card.append(steps.node);
   $("thread").append(user, card);
   scrollDown();
 
   const started = performance.now();
+  const request = {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "X-User-Role": state.role },
+    body: JSON.stringify({ question }),
+  };
+  const finish = (data, status) => {
+    steps.finish(data);
+    renderAnswer(card, data, status, performance.now() - started, steps.node);
+  };
   try {
-    const response = await fetch("/api/v1/ask", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "X-User-Role": state.role },
-      body: JSON.stringify({ question }),
-    });
-    let data;
-    try {
-      data = await response.json();
-    } catch {
-      data = { status: "error", answer: "Respons server tidak dapat dibaca." };
+    const response = await fetch("/api/v1/ask/stream", request);
+    const type = response.headers.get("content-type") || "";
+    if (response.ok && type.startsWith("text/event-stream")) {
+      // Events are rendered in arrival order, each held on screen briefly so fast steps stay readable
+      // (the database steps take milliseconds). Pacing is display-only and skipped for reduced motion.
+      const hold = { stage: 150, sql: 450 };
+      let shown = Promise.resolve();
+      let final = null;
+      await readEvents(response, (event, data) => {
+        shown = shown.then(async () => {
+          if (event === "stage") steps.start(data.id);
+          else if (event === "sql") sqlPreview(card, data);
+          else if (event === "result") final = data;
+          scrollDown();
+          if (!REDUCED_MOTION && hold[event]) await new Promise((r) => setTimeout(r, hold[event]));
+        });
+      });
+      await shown;
+      if (!final) throw new Error("stream ended without a result");
+      finish(final.response, final.status);
+    } else {
+      let data;
+      try {
+        data = await response.json();
+      } catch {
+        data = { status: "error", answer: "Respons server tidak dapat dibaca." };
+      }
+      if (response.status === 422) data = { status: "error", code: "invalid_request", answer: "Pertanyaan tidak valid (maksimal 2000 karakter)." };
+      finish(data, response.status);
     }
-    if (response.status === 422) data = { status: "error", code: "invalid_request", answer: "Pertanyaan tidak valid (maksimal 2000 karakter)." };
-    renderAnswer(card, data, response.status, performance.now() - started);
   } catch {
-    renderAnswer(card, { status: "error", answer: "Tidak dapat terhubung ke server." }, 0, performance.now() - started);
+    finish({ status: "error", answer: "Tidak dapat terhubung ke server. Coba lagi sebentar lagi." }, 0);
   } finally {
     state.busy = false;
     $("send").disabled = false;
