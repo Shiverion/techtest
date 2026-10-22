@@ -13,6 +13,7 @@ import argparse
 import datetime as dt
 import json
 import platform
+import subprocess
 import sys
 import time
 from importlib.metadata import version
@@ -32,6 +33,8 @@ def main() -> int:
     parser.add_argument("--runs", type=int, default=1)
     parser.add_argument("--url", help="base URL of a running API (default: in-process app)")
     parser.add_argument("--out", default=str(ROOT / "evidence"))
+    parser.add_argument("--pause", type=float, default=0.0,
+                        help="seconds between requests (keep a deployed instance under its rate limit)")
     args = parser.parse_args()
 
     settings = get_settings()
@@ -46,6 +49,7 @@ def main() -> int:
 
     def post(question: str, role: Role) -> tuple[int, dict]:
         r = http.post("/api/v1/ask", json={"question": question}, headers={"X-User-Role": role.value})
+        time.sleep(args.pause)
         return r.status_code, r.json()
 
     reference = Reference(settings)
@@ -72,6 +76,7 @@ def main() -> int:
         "packages": {p: version(p) for p in ("fastapi", "sqlglot", "pymssql", "openai", "pydantic")},
         "target": args.url or "in-process app",
         "runs": args.runs,
+        "commit": git_commit(),
     }
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
@@ -84,13 +89,24 @@ def main() -> int:
     return 0 if ok == total else 1
 
 
+def git_commit() -> str:
+    try:
+        sha = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=ROOT, capture_output=True, text=True,
+                             check=True).stdout.strip()
+        dirty = subprocess.run(["git", "status", "--porcelain"], cwd=ROOT, capture_output=True, text=True).stdout
+    except (OSError, subprocess.CalledProcessError):
+        return "unknown"
+    return sha + (" (uncommitted changes)" if dirty.strip() else "")
+
+
 def render_markdown(meta: dict, runs: list[dict]) -> str:
     total = sum(len(r["cases"]) for r in runs)
     ok = sum(c["passed"] for r in runs for c in r["cases"])
     lines = [
         "# Live evaluation: management questions Q1-Q5 x roles",
         "",
-        f"Generated {meta['generated_at']} by `scripts/run_eval.py` against the real model and SQL Server.",
+        f"Generated {meta['generated_at']} by `scripts/run_eval.py` at commit `{meta['commit']}`, against the real",
+        f"model and SQL Server. Target: {meta['target']}.",
         "",
         f"- Model: `{meta['model']}` via `{meta['llm_base_url']}` (temperature: {meta['temperature'] or 'provider default'})",
         f"- Database: {meta['sql_server']}",
