@@ -98,17 +98,31 @@ of a request, where each refusal happens, data model and access per role, and wh
 [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
 ```mermaid
-flowchart LR
-    C[Client<br/>X-User-Role / user_role] --> A[FastAPI<br/>role resolution, rate limit,<br/>concurrency cap]
-    A --> G[Input guard<br/>write intent, length,<br/>injection flag]
-    G --> T[Role scope check<br/>e.g. ledger topics<br/>for Sales_Staff]
-    T --> E[Entity lookup<br/>parameterized,<br/>role's own login]
-    E --> L[LLM planner<br/>role-scoped schema,<br/>strict JSON plan]
-    L --> P[SQL policy<br/>sqlglot AST allowlist,<br/>table allowlist per role]
-    P --> F[Filter check<br/>unknown / ambiguous<br/>entities]
-    F --> D[(SQL Server<br/>per-role login,<br/>SELECT-only grants)]
-    D --> R[Renderer<br/>Rupiah, tables,<br/>template answer]
-    D -. syntax/name error, once .-> L
+flowchart TD
+    subgraph ClientLayer["Client"]
+        C["Client<br/>X-User-Role or user_role"]
+    end
+
+    subgraph ApiLayer["API controls"]
+        A["FastAPI<br/>Role resolution<br/>Rate and concurrency limits"]
+        G["Input guard<br/>Write intent and length<br/>Injection flag"]
+        T["Role scope check<br/>Ledger topics blocked<br/>for Sales_Staff"]
+        E["Entity lookup<br/>Parameterized queries<br/>Role-specific login"]
+    end
+
+    subgraph PlanLayer["Planning and policy"]
+        L(["LLM planner<br/>Role-scoped schema<br/>Strict JSON plan"])
+        P["SQL policy<br/>AST and table allowlists<br/>Injected row cap"]
+        F["Filter check<br/>Unknown or ambiguous entities"]
+    end
+
+    subgraph DataLayer["Data and response"]
+        D[("SQL Server<br/>Per-role login<br/>SELECT-only grants")]
+        R["Renderer<br/>Rupiah and tables<br/>Template answer"]
+    end
+
+    C --> A --> G --> T --> E --> L --> P --> F --> D --> R
+    D -.->|"Syntax or name error<br/>one retry"| L
 ```
 
 ### Request flow
@@ -164,15 +178,33 @@ This section summarises the design at the level of requirements, capacity, and t
 
 ### Defence-in-Depth Layers
 
-```text
- request ─► role resolution ─► rate limit (30/min) + concurrency cap (4) ─► input guard
-        ─► role scope check ─► entity lookup (parameterized) ─► LLM plan (role-scoped schema, strict JSON)
-        ─► sqlglot AST allowlist + per-role table allowlist + injected row cap
-        ─► filter-literal existence check ─► SQL Server (per-role login, SELECT-only, rollback)
-        ─► template renderer (figures from result sets only)
+```mermaid
+flowchart TD
+    Q["Request"]
 
- Hard boundaries: database grants · AST policy        Supporting: guards, lookups, renderer
+    subgraph Entry["Supporting request controls"]
+        RR["Role resolution"]
+        RL["Rate limit: 30/min<br/>Concurrency cap: 4"]
+        IG["Input guard"]
+        RS["Role scope check"]
+        EL["Entity lookup<br/>Parameterized"]
+    end
+
+    subgraph Planning["Planning and validation"]
+        LP(["LLM plan<br/>Role-scoped schema<br/>Strict JSON"])
+        SP["SQL policy<br/>AST and table allowlists<br/>Injected row cap"]
+        FC["Filter-literal<br/>existence check"]
+    end
+
+    subgraph Execution["Execution and response"]
+        DB[("SQL Server<br/>Per-role SELECT-only login<br/>Always rolled back")]
+        TR["Template renderer<br/>Figures from results only"]
+    end
+
+    Q --> RR --> RL --> IG --> RS --> EL --> LP --> SP --> FC --> DB --> TR
 ```
+
+The hard boundaries are the SQL policy and database grants; role and input guards, lookups, and rendering are supporting controls.
 
 ### Capacity and Limits
 
