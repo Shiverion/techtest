@@ -142,6 +142,74 @@ flowchart LR
    `{q2.row_count}`) filled from the result. Money columns (decided from the SQL, not the data type) become
    `Rp 10.500.000`. A template that states its own amounts or numbers falls back to a deterministic summary.
 
+## System Design
+
+This section summarises the design at the level of requirements, capacity, and trade-offs. Component diagrams, the request sequence diagram, and the data-access matrix are in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+
+### Requirements
+
+**Functional**
+- Answer management questions in Indonesian with Rupiah-formatted figures and the supporting tables.
+- Enforce role-based access (`Sales_Staff`, `Management`) and refuse any data modification.
+- Expose an HTTP API (with OpenAPI docs) and a demo chat UI that streams pipeline progress.
+
+**Non-functional**
+- **Safety first**: no write path can exist, even with a fully manipulated model.
+- **Correctness**: figures come only from SQL results, never from model prose.
+- **Latency**: interactive (seconds), bounded by a 120 s request deadline and a 60 s per-call LLM timeout.
+- **Portability**: any OpenAI-compatible endpoint; SQL Server locally (Docker) or Azure SQL.
+
+**Constraints**
+- Fixed fixture schema (`schema.sql`) with no customer ID; the role arrives from the caller, as the brief specifies.
+
+### Defence-in-Depth Layers
+
+```text
+ request ─► role resolution ─► rate limit (30/min) + concurrency cap (4) ─► input guard
+        ─► role scope check ─► entity lookup (parameterized) ─► LLM plan (role-scoped schema, strict JSON)
+        ─► sqlglot AST allowlist + per-role table allowlist + injected row cap
+        ─► filter-literal existence check ─► SQL Server (per-role login, SELECT-only, rollback)
+        ─► template renderer (figures from result sets only)
+
+ Hard boundaries: database grants · AST policy        Supporting: guards, lookups, renderer
+```
+
+### Capacity and Limits
+
+| Limit | Default | Purpose |
+| --- | --- | --- |
+| `RATE_LIMIT_PER_MINUTE` | 30 per client | Abuse and cost control |
+| `MAX_CONCURRENT_REQUESTS` | 4 | Protect the database and model quota |
+| `MAX_ROWS` / `MAX_RESULT_BYTES` | 200 / 256 KB | Bound payloads and memory |
+| `DB_QUERY_TIMEOUT_S` | 5 s | Stop runaway queries |
+| `REQUEST_DEADLINE_S` | 120 s | Whole pipeline, including one repair round |
+
+A typical request makes one model call plus at most one repair call, and up to three `SELECT`s. On a single process, throughput is therefore set mostly by LLM latency rather than by the database.
+
+### Reliability
+
+- One repair round for SQL syntax or name errors, with sanitized feedback. Policy and permission failures are final, which prevents retry-driven probing.
+- A fresh connection per request, always rolled back, so no state leaks between requests.
+- The Azure SQL free tier auto-pauses, so the first request after idle can take about a minute. The deadline is sized for that.
+- Evidence: 300 tests (299 offline), a 50/50 live evaluation, and 34/34 red-team controls, each report tied to a commit.
+
+### Trade-offs
+
+| Decision | Benefit | Cost |
+| --- | --- | --- |
+| Linear pipeline, no agent framework | Auditable, deterministic control flow | Less flexible for multi-step analysis |
+| Positive AST allowlist | Unknown syntax is rejected by default | Some legitimate T-SQL needs explicit allow-listing |
+| Model-written literals (validated AST) vs bind parameters | Simpler planner contract | Relies on policy and login rather than parameterization |
+| In-memory rate limiter and semaphore | No extra infrastructure | Not shared across instances |
+| Template answers | No hallucinated figures | Less natural prose |
+
+### What to Revisit as It Grows
+
+- Replace demo-mode roles with verified identity (SSO/JWT claims mapped to database roles).
+- Move rate limiting and concurrency control to Redis when running more than one instance.
+- Add a semantic cache keyed on normalized question + role for repeated management queries.
+- Add result-plausibility checks (cross-query totals) to address the "valid SQL, wrong number" gap.
+
 ## Security model
 
 The layers are not equivalent. **Database permissions** and the **SQL policy** are the hard boundaries for
